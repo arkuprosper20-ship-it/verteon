@@ -1,0 +1,234 @@
+{
+  "name": "local-ai-agent",
+  "displayName": "Local AI Agent",
+  "description": "An agentic AI coding assistant that runs inside VS Code, powered by local models via Ollama. Inspects your project, edits files, runs commands, runs tests, and fixes problems autonomously.",
+  "version": "0.2.0",
+  "publisher": "local-ai-agent",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning",
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "aiAgentContainer",
+          "title": "AI Agent",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "aiAgentContainer": [
+        {
+          "type": "webview",
+          "id": "aiAgent.chatView",
+          "name": "AI Agent"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "aiAgent.open",
+        "title": "AI Agent: Open",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "aiAgent.newChat",
+        "title": "AI Agent: New Chat"
+      },
+      {
+        "command": "aiAgent.explainSelection",
+        "title": "AI Agent: Explain Selection"
+      },
+      {
+        "command": "aiAgent.fixSelection",
+        "title": "AI Agent: Fix Selection"
+      },
+      {
+        "command": "aiAgent.fixErrors",
+        "title": "AI Agent: Fix Errors"
+      },
+      {
+        "command": "aiAgent.refactorSelection",
+        "title": "AI Agent: Refactor Selection"
+      },
+      {
+        "command": "aiAgent.inspectProject",
+        "title": "AI Agent: Inspect Project"
+      },
+      {
+        "command": "aiAgent.stopAgent",
+        "title": "AI Agent: Stop Agent"
+      },
+      {
+        "command": "aiAgent.openSettings",
+        "title": "AI Agent: Settings"
+      },
+      {
+        "command": "aiAgent.clearMemory",
+        "title": "AI Agent: Clear Project Memory"
+      },
+      {
+        "command": "aiAgent.refreshModels",
+        "title": "AI Agent: Refresh Local Models"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "aiAgent.explainSelection",
+          "when": "editorHasSelection",
+          "group": "aiAgent"
+        },
+        {
+          "command": "aiAgent.fixSelection",
+          "when": "editorHasSelection",
+          "group": "aiAgent"
+        },
+        {
+          "command": "aiAgent.refactorSelection",
+          "when": "editorHasSelection",
+          "group": "aiAgent"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Local AI Agent",
+      "properties": {
+        "agent.provider": {
+          "type": "string",
+          "enum": [
+            "ollama",
+            "groq"
+          ],
+          "default": "ollama",
+          "description": "Which AI provider backend to use. Local Ollama is the default and does not require a cloud API key."
+        },
+        "agent.ollama.url": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "Base URL of the local Ollama server."
+        },
+        "agent.groq.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Groq API key. Only used when provider is set to groq."
+        },
+        "agent.model": {
+          "type": "string",
+          "default": "qwen2.5-coder:7b",
+          "description": "Name of the local model to use for coding tasks (must be pulled in Ollama)."
+        },
+        "agent.temperature": {
+          "type": "number",
+          "default": 0.2,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Sampling temperature."
+        },
+        "agent.maxContext": {
+          "type": "number",
+          "default": 8192,
+          "description": "Maximum context window (tokens) to request from the model (Ollama num_ctx)."
+        },
+        "agent.maxOutputTokens": {
+          "type": "number",
+          "default": 2048,
+          "description": "Maximum tokens the model may generate in a single response."
+        },
+        "agent.commandTimeout": {
+          "type": "number",
+          "default": 120000,
+          "description": "Timeout in milliseconds for terminal commands run by the agent."
+        },
+        "agent.maxAgentIterations": {
+          "type": "number",
+          "default": 5,
+          "description": "Maximum number of diagnose-fix-retry iterations the agent will attempt on a task before stopping and asking for input."
+        },
+        "agent.requireCommandApproval": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require explicit user approval before running commands classified as requiring approval or higher risk."
+        },
+        "agent.requireFileApproval": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require explicit user approval before applying file edits/creates/deletes beyond small safe edits."
+        },
+        "agent.enableProjectMemory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Persist a compact project memory (framework, conventions, commands) across sessions."
+        },
+        "agent.enableGitTools": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow the agent to inspect git status/diff/log."
+        },
+        "agent.debugLogging": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable verbose debug logging to the 'AI Agent' output channel."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "build": "node esbuild.js --production",
+    "package": "npm run build && npx @vscode/vsce package --no-dependencies",
+    "test": "npm run compile && npx tsc -p test/tsconfig.json && set ELECTRON_RUN_AS_NODE=& node out/test/test/runTest.js",
+    "vscode:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@textlint/linter-formatter": "^15.8.0",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^3.9.2",
+    "astral-regex": "^2.0.0",
+    "asynckit": "^0.5.0",
+    "boolbase": "^2.0.0",
+    "chai": "^6.3.0",
+    "combined-stream": "^1.0.8",
+    "delayed-stream": "^1.0.0",
+    "ecdsa-sig-formatter": "^1.0.11",
+    "emoji-regex": "^11.0.0",
+    "esbuild": "^0.23.1",
+    "has-flag": "^5.0.1",
+    "is-fullwidth-code-point": "^5.1.0",
+    "leven": "^4.1.0",
+    "lodash.includes": "^4.3.0",
+    "lodash.isboolean": "^3.0.3",
+    "lodash.isinteger": "^4.0.4",
+    "lodash.isnumber": "^3.0.3",
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.isstring": "^4.0.1",
+    "lodash.once": "^4.1.1",
+    "lodash.truncate": "^4.4.2",
+    "mocha": "^12.0.3",
+    "parse-semver": "^1.1.1",
+    "pend": "^1.2.0",
+    "pluralize": "^8.0.0",
+    "safer-buffer": "^2.1.2",
+    "text-table": "^0.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "url-join": "^5.0.0",
+    "whatwg-encoding": "^3.1.1"
+  }
+}

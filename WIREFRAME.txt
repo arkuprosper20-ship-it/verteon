@@ -1,0 +1,230 @@
+VERTEON — UI WIREFRAMES
+Plain-text layout reference. Mirrors media/main.css and the markup generated in
+src/ui/sidebarProvider.ts -> getHtml(). No image tooling required to read this.
+
+Legend:  [ ] control   |   text   # border/# structure   . empty state
+
+
+================================================================================
+1. FULL LAYOUT (sidebar view, >= 1000px effective width)
+================================================================================
+
++--------------------------------------------------------------------------+
+| [VERTEON]                  ( ollama ) v                       [ ? ][ _ ][X] |
+|  brand                 provider + health dot                          window
++--------------------------------------------------------------------------+
+|            |                                        |                     |
+|  SIDEBAR   |            AGENT WORKSPACE              |     ACTIVITY PANEL    |
+|  260px     |            flex                       |     260px            |
+|            |                                        |                     |
+|            |                                        |  ACTIVITY            |
+| +--------+ | +------------------------------------+ |  ------------------- |
+| |+ New   | | |  Verteon Agent                     | |  AGENT STATUS       |
+| |  Task  | | |  Your AI coding assistant.         | |  Running - 2 tools   |
+| +--------+ | |  Inspect / edit / build / fix.     | |                     |
+|            | |                                    | |  WORKSPACE          |
+|  WORKSPACE | |  [Inspect project] [Fix errors]    | |  my-app (node)       |
+|  > Agent   | |  [Explain code]   [Refactor]       | |                     |
+|    Files   | |                                    | |  LIVE ACTIVITY      |
+|    Terminal| |  You: fix the failing tests       | |  > readFile         |
+|    Git     | |                                    | |  > runCommand npm t |
+|    Settings| |  Verteon: Running runTests...      | |  > runTests failed  |
+|            | |  [diff] src/api/user.ts            | |                     |
+|  RECENT    | |  $ npm test                        | |  PROVIDER           |
+|  Fix login | |  3 failing, 12 passing             | |  [x] Ollama         |
+|  Refactor  | |                                    | |  [ ] Groq           |
+|    API     | +------------------------------------+ |                     |
+|            | | Ask the agent to inspect, edit... | |                     |
+| ------------| | [New]                    [Stop][Send]| |                     |
+| my-app     | +------------------------------------+ |                     |
+| Ollama: OK |                                        |                     |
++--------------------------------------------------------------------------+
+
+Column rules
+  sidebar      fixed width, always visible at full size
+  workspace    flex, holds the conversation and the composer
+  activity     fixed width, live feed only; never scrolls independently
+
+
+================================================================================
+2. EMPTY STATE (no messages yet)
+================================================================================
+
++------------------------------------+
+|                                    |
+|              <>                    |
+|         Verteon Agent              |
+|   Your AI coding assistant.        |
+|   Ask me to inspect, edit,         |
+|   build, or fix your project.      |
+|                                    |
+|  [Inspect project] [Fix errors]    |
+|  [Explain code]    [Refactor]      |
+|                                    |
++------------------------------------+
+| Ask the agent to inspect, edit... |
+| [New]                  [Send]     |
++------------------------------------+
+
+Suggestion buttons are literal prompts, not placeholders:
+  Inspect project -> "Inspect this project and summarize its structure,
+                     framework, and how to run/test it."
+  Fix errors      -> "Find and fix all current errors/diagnostics in this
+                     project. Run relevant checks to verify."
+  Explain code    -> "Explain the currently selected code."
+  Refactor        -> "Refactor the currently selected code for clarity and
+                     maintainability, preserving behavior."
+
+
+================================================================================
+3. AGENT RUNNING
+================================================================================
+
++------------------------------------+
+| You: refactor auth to use sessions|
+|                                    |
+| Verteon                            |
+|  > getSelection        ok  41ms    |   tool start / tool end rows,
+|  > searchFiles          ok  88ms    |   each with a real duration or
+|  > applyEdit            ok  1.2s    |   failure reason
+|  > runTests             FAILED      |
+|    3 failing, 12 passing           |
+|                                    |
+| I'll fix the failing assertion in  |
+| src/auth/session.ts next.          |
++------------------------------------+
+| Ask the agent to inspect, edit... |
+| [New]                  [Stop][Send]|   <- Stop appears only while busy
++------------------------------------+
+
+Streaming: assistant text arrives as textDelta events and is appended to the
+current response block. The status dot in the header reflects a real
+healthCheck() probe, not an optimistic state.
+
+
+================================================================================
+4. APPROVAL PROMPT (agent is blocked until answered)
+================================================================================
+
++------------------------------------+
+| APPROVAL REQUIRED                   |
+|                                    |
+| The agent wants to run a command:  |
+|                                    |
+|   $ npm install express            |
+|                                    |
+| Tier: approval                     |
+| "This command modifies             |
+|  dependencies, files, or           |
+|  repository state."                |
+|                                    |
+| [ Approve once ]  [ Reject ]       |
++------------------------------------+
+
+Rules
+  - Approval grants the exact command shown, once. It is not a session-wide
+    permission and it does not generalise to similar commands.
+  - Approvals queue when several tools are requested in one model turn; each is
+    answered separately, in order.
+  - Tier "blocked" never renders Approve. See docs/SECURITY.md.
+
+
+================================================================================
+5. EDIT REVIEW (native VS Code diff, not the webview)
+================================================================================
+
+  +------------------------------------------------------------------+
+  | src/auth/session.ts                    Original  |  Modified     |
+  +------------------------------------------------------------------+
+  |  12  const token = req.cookies.token; |  const token = readSession|
+  |  13  return res.json({ token });       |  (req);                   |
+  |                                      |                            |
+  +------------------------------------------------------------------+
+      Accept / Reject is the native diff editor's own affordance.
+      Verteon passes the before/after text to vscode.diff and never renders
+      its own editor, so undo, revert, and dirty-editor state stay native.
+
+
+================================================================================
+6. SIDEBAR SUB-VIEWS
+================================================================================
+
+Files                        Terminal                     Git
++--------------------+  +--------------------+  +--------------------+
+| Search files...     |  | $ npm test         |  | branch: main       |
+| src/               |  |   3 failing        |  | 3 changes          |
+|   api/user.ts      |  |                     |  |  M src/a.ts       |
+|   auth/session.ts  |  | $ npm run build     |  |  M src/b.ts       |
+| package.json       |  |   ok in 4.2s        |  | ?? notes.md       |
++--------------------+  +--------------------+  +--------------------+
+                            [ Rerun ]  per entry
+
+Settings
++--------------------+
+| Provider  ( groq ) |
+| Model     qwen...   |
+| Iterations      5  |
+| [x] Ask before running commands   |
+| [x] Ask before editing files      |
+| [x] Remember project conventions  |
+| Groq key  [ ****** ]  [ Save ]   |
+| [ Open VS Code settings ]         |
++--------------------+
+
+Recent
++--------------------+
+| Fix login failure  |
+| Refactor API layer |
+| Migrate to zod     |
++--------------------+
+
+Opening a recent entry restores that conversation: user turns are re-rendered as
+user messages and assistant turns as activity entries. Tool-call plumbing is not
+replayed, so a restored transcript never re-runs an action.
+
+
+================================================================================
+7. ACTIVITY PANEL SECTIONS
+================================================================================
+
+  AGENT STATUS      idle | running | stopped | limit reached, with the reason
+  WORKSPACE         folder name, root path, detected project type
+  LIVE ACTIVITY     streaming feed: tool starts, results, terminal output,
+                    errors. Bounded in length; the full record is in the
+                    terminal view and the output channel.
+  PROVIDER          health dot + message per provider, switch on click
+
+Every value here comes from a real event: postStatus() for health,
+workspaceInfo for the root, gitStatus from `git status --porcelain`, and
+activity events emitted by the agent loop. Nothing is synthesised for display.
+
+
+================================================================================
+8. RESPONSIVE BEHAVIOUR
+================================================================================
+
+  >= 1000px   sidebar | workspace | activity      all three visible
+  700-999px   sidebar | workspace                 activity collapses into the
+                                                 workspace header
+  <  700px    workspace only                       sidebar and activity become
+                                                 overlay drawers, opened from
+                                                 header buttons and dismissed
+                                                 by selecting outside
+
+  The webview is registered with retainContextWhenHidden: true, so collapsing
+  the view does not kill an in-flight run or lose scroll position.
+
+
+================================================================================
+9. STATE RULES
+================================================================================
+
+  status dot       green  = provider healthCheck() succeeded
+                   red    = provider returned an error or was unreachable
+                   grey   = not yet probed
+  Send             enabled only when input is non-empty and the agent is idle
+  Stop             visible only while a run is active
+  Run ending       completed / limit reached / stopped / error are distinct
+                   messages; "done" is never shown after a failure
+  Empty activity   shown as an empty state, never as a fabricated entry
+  Provider errors  surfaced verbatim from the provider, including HTTP status

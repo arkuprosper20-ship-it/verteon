@@ -1,0 +1,60 @@
+# Verteon — ignore rules
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+*.tsbuildinfo
+tsc-out*.txt
+
+# Stale tsc output that leaks into src/ when someone runs tsc directly.
+# esbuild bundles src/**/*.ts into dist/, so these are not source.
+src/**/*.js
+src/**/*.js.map
+
+# Packaged extensions (release artifacts, not source)
+*.vsix
+
+# VS Code test harness
+.vscode-test/
+
+# ---------------------------------------------------------------------------
+# Secrets — never commit real credentials
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+*.key
+*.pem
+*.p12
+*.pfx
+*.secret
+*.crt
+*.keystore
+
+secrets/
+credentials/
+private/
+.auth/
+
+# Local agent state written at runtime
+.ai-agent/
+
+# ---------------------------------------------------------------------------
+# Editor / OS
+# ---------------------------------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*

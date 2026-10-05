@@ -19,6 +19,8 @@ export interface AgentLoopOptions {
   emitActivity: (activity: ActivityEvent) => void;
   onTextDelta: (delta: string) => void;
   showDiff: (filePath: string, before: string, after: string, title: string) => Promise<void>;
+  onPlanUpdate?: (plan: any) => void;
+  onSummary?: (summary: any) => void;
 }
 
 export interface AgentLoopResult {
@@ -121,6 +123,12 @@ export async function runAgentLoop(
           ? toolResult.output || '(no output)'
           : `ERROR: ${toolResult.error ?? 'tool failed'}\n${toolResult.output ?? ''}`;
         history.push({ role: 'tool', content: truncateForModel(content), toolName: tool.name, toolCallId: call.id });
+        if (tool.name === 'updatePlan' && toolResult.data?.plan) {
+          options.onPlanUpdate?.(toolResult.data.plan);
+        }
+        if (tool.name === 'summarizeTask' && toolResult.data?.summary) {
+          options.onSummary?.(toolResult.data.summary);
+        }
       } catch (err: any) {
         logger.error(`Tool ${tool.name} threw`, err);
         options.emitActivity({ kind: 'tool_end', text: `${tool.name} threw an error: ${err.message}`, toolName: tool.name, success: false });

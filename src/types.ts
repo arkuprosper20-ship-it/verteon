@@ -28,6 +28,45 @@ export interface ToolResult {
   data?: any;
 }
 
+export interface TerminalResult {
+  command: string;
+  exitCode: number | null;
+  stdout: string;
+  stderr: string;
+  duration: number;
+  timedOut: boolean;
+  cancelled: boolean;
+}
+
+export interface ChecklistStep {
+  id: string;
+  title: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'blocked' | 'failed';
+  detail?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface TaskSummary {
+  id: string;
+  title: string;
+  status: 'completed' | 'partial' | 'blocked' | 'failed' | 'cancelled';
+  changes: string[];
+  filesChanged: string[];
+  validation: { label: string; passed: boolean }[];
+  commandsRun: string[];
+  issues: string[];
+  remainingWork: string[];
+  securityNotes: string[];
+  result: string;
+  createdAt: number;
+}
+
+export interface AgentPlan {
+  steps: ChecklistStep[];
+  createdAt: number;
+}
+
 export interface ApprovalRequest {
   title: string;
   whatWillRun: string;
@@ -41,6 +80,35 @@ export interface ActivityEvent {
   text: string;
   toolName?: string;
   success?: boolean;
+}
+
+export interface ChecklistStep {
+  id: string;
+  title: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'blocked' | 'failed';
+  detail?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface AgentPlan {
+  steps: ChecklistStep[];
+  createdAt: number;
+}
+
+export interface TaskSummary {
+  id: string;
+  title: string;
+  status: 'completed' | 'partial' | 'blocked' | 'failed' | 'cancelled';
+  changes: string[];
+  filesChanged: string[];
+  validation: { label: string; passed: boolean }[];
+  commandsRun: string[];
+  issues: string[];
+  remainingWork: string[];
+  securityNotes: string[];
+  result: string;
+  createdAt: number;
 }
 
 export interface ChatMessage {

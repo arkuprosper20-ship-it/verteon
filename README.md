@@ -11,7 +11,12 @@ failures — locally by default, with a hard approval boundary around anything r
 
 [![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.85.0-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com/)
 [![Version](https://img.shields.io/badge/version-0.2.0-informational)](./package.json)
-[![License](https://img.shields.io/badge/license-pro%20prietary-informational)](./LICENSE.txt)
+[![License](https://img.shields.io/badge/license-proprietary-informational)](./LICENSE.txt)
+[![Build](https://github.com/arkuprosper20-ship-it/verteon/actions/workflows/ci.yml/badge.svg)](https://github.com/arkuprosper20-ship-it/verteon/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/arkuprosper20-ship-it/verteon/actions)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![VSIX](https://img.shields.io/badge/download-vsix-blue?logo=visualstudiocode)](https://verteon.web.app/local-ai-agent-0.2.0.vsix)
 
 </div>
 
@@ -334,7 +339,7 @@ Tools that shell out must call `classifyCommand` first — the sidebar does not 
 
 ## UI wireframes
 
-Full text version: [`WIREFRAME.txt`](./WIREFRAME.txt)
+Full text version: `WIREFRAME.txt`
 
 ### Full layout
 
@@ -435,7 +440,7 @@ describes what actually runs.
 
 ## License
 
-Proprietary — all rights reserved. See [`LICENSE.txt`](./LICENSE.txt).
+Proprietary — all rights reserved. See `LICENSE.txt`.
 
 The packaged extension is currently published under the identifier `local-ai-agent`;
 **Verteon** is the product name used across the UI and this repository.

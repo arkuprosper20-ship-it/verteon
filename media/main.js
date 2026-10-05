@@ -10,14 +10,18 @@
     connected: false,
     statusMessage: '',
     models: [],
+    defaultModels: [],
+    authenticated: false,
     messages: [],
     activities: [],
     pendingApprovals: new Map(),
     agentRunning: false,
+    toolCount: 0,
     streaming: false,
     currentStreamingEl: null,
     workspaceRoot: '',
     workspaceName: '',
+    projectType: '',
     gitStatus: null,
     files: [],
     terminalHistory: [],
@@ -25,6 +29,14 @@
     history: [],
     settings: {},
     expandedTools: new Set(),
+    terminalLive: [],
+    terminalRunning: false,
+    terminalCwd: '',
+    terminalStatus: 'Ready',
+    terminalCommandHistory: [],
+    terminalHistoryIndex: -1,
+    plan: null,
+    summary: null,
   };
 
   // ===== DOM REFS =====
@@ -33,6 +45,11 @@
     providerSelector: $('provider-selector'),
     providerName: $('provider-name'),
     providerStatusDot: $('provider-status-dot'),
+    modelSelector: $('model-selector'),
+    landingView: $('landing-view'),
+    mainLayout: $('main-layout'),
+    signinGroqBtn: $('signin-groq-btn'),
+    loginOllamaBtn: $('login-ollama-btn'),
     sidebar: $('sidebar'),
     activityPanel: $('activity-panel'),
     agentContent: $('agent-content'),
@@ -46,11 +63,20 @@
     providerPanel: $('provider-panel'),
     filesPanel: $('files-panel'),
     terminalPanel: $('terminal-panel'),
+    terminalCommandInput: $('terminal-command-input'),
+    terminalRunBtn: $('terminal-run-btn'),
+    terminalStopBtn: $('terminal-stop-btn'),
+    terminalLiveOutput: $('terminal-live-output'),
+    terminalStatus: $('terminal-status'),
+    terminalCwd: $('terminal-cwd'),
     gitPanel: $('git-panel'),
     settingsPanel: $('settings-panel'),
   };
 
   // ===== UTILITIES =====
+  let currentToolEl = null;
+  let currentToolStart = 0;
+
   function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
@@ -95,6 +121,33 @@
     els.providerName.textContent = state.provider;
     const dot = els.providerStatusDot;
     dot.className = 'status-dot ' + (state.connected ? 'connected' : 'disconnected');
+  }
+
+  function applyAuthState() {
+    if (state.authenticated) {
+      els.landingView.style.display = 'none';
+      els.mainLayout.classList.remove('hidden');
+      if (els.modelSelector) els.modelSelector.style.display = '';
+    } else {
+      els.landingView.style.display = 'flex';
+      els.mainLayout.classList.add('hidden');
+      if (els.modelSelector) els.modelSelector.style.display = 'none';
+    }
+  }
+
+  function renderModelSelector() {
+    if (!els.modelSelector) return;
+    const models = state.defaultModels.length ? state.defaultModels : (state.model ? [state.model] : []);
+    els.modelSelector.innerHTML = models.map((m) =>
+      `<option value="${escapeHtml(m)}" ${m === state.model ? 'selected' : ''}>${escapeHtml(m)}</option>`
+    ).join('');
+    if (state.model && !models.includes(state.model)) {
+      const opt = document.createElement('option');
+      opt.value = state.model;
+      opt.textContent = state.model;
+      opt.selected = true;
+      els.modelSelector.appendChild(opt);
+    }
   }
 
   function renderProviderPanel() {
@@ -142,7 +195,7 @@
         <span class="status-label">Status</span>
         <span class="status-value">
           <span class="dot ${status}"></span>
-          ${labels[status] || status}
+          ${status === 'running' && state.toolCount > 0 ? `Running - ${state.toolCount} tool${state.toolCount === 1 ? '' : 's'}` : (labels[status] || status)}
         </span>
       </div>
       ${detail ? `<div class="status-row"><span class="status-label">Detail</span><span class="status-value" style="font-weight:400;font-size:0.85em">${escapeHtml(detail)}</span></div>` : ''}
@@ -160,6 +213,7 @@
     els.workspaceInfo.innerHTML = `
       <div class="workspace-name">&#128193; ${escapeHtml(state.workspaceName || 'No workspace')}</div>
       <div class="info-row"><span>Path</span><span class="value">${escapeHtml(state.workspaceRoot || '-')}</span></div>
+      ${state.projectType ? `<div class="info-row"><span>Type</span><span class="value">${escapeHtml(state.projectType)}</span></div>` : ''}
       ${state.gitStatus ? `
         <div class="info-row"><span>Branch</span><span class="value">${escapeHtml(state.gitStatus.branch || '-')}</span></div>
         <div class="git-status ${state.gitStatus.clean ? 'clean' : 'dirty'}">
@@ -252,7 +306,6 @@
       const toolName = activity.toolName || 'tool';
       const el = document.createElement('div');
       el.className = 'tool-activity';
-      el.dataset.toolId = activity.text;
       el.innerHTML = `
         <div class="tool-activity-header">
           <div class="tool-activity-title">
@@ -263,7 +316,6 @@
         </div>
         <div class="tool-activity-details">
           <div class="tool-activity-detail-row"><span class="key">Tool</span><span>${escapeHtml(toolName)}</span></div>
-          <div class="tool-activity-detail-row"><span class="key">Input</span><span>${escapeHtml(activity.text)}</span></div>
         </div>
       `;
       el.querySelector('.tool-activity-header').addEventListener('click', () => {
@@ -271,21 +323,34 @@
       });
       els.agentContent.appendChild(el);
       scrollToBottom();
-      addActivity(toolName, activity.text, 'running');
+      currentToolEl = el;
+      currentToolStart = Date.now();
+      state.toolCount++;
+      addActivity(toolName, '', 'running');
       return el;
     }
     if (kind === 'tool_end') {
-      const el = els.agentContent.querySelector(`[data-tool-id="${CSS.escape(activity.text)}"]`);
+      const el = currentToolEl;
+      const duration = currentToolEl ? Date.now() - currentToolStart : 0;
+      currentToolEl = null;
       if (el) {
         const statusEl = el.querySelector('.tool-activity-status');
+        const durText = duration < 1000 ? `${duration}ms` : `${(duration / 1000).toFixed(1)}s`;
         if (activity.success) {
           statusEl.className = 'tool-activity-status completed';
-          statusEl.innerHTML = '&#10003; Completed';
-          addActivity(activity.toolName || 'tool', 'Completed', 'completed');
+          statusEl.innerHTML = `&#10003; ok ${durText}`;
+          addActivity(activity.toolName || 'tool', `ok ${durText}`, 'completed');
         } else {
           statusEl.className = 'tool-activity-status failed';
-          statusEl.innerHTML = '&#10007; Failed';
-          addActivity(activity.toolName || 'tool', 'Failed', 'failed');
+          statusEl.innerHTML = `&#10007; FAILED ${durText}`;
+          addActivity(activity.toolName || 'tool', `FAILED ${durText}`, 'failed');
+        }
+        const details = el.querySelector('.tool-activity-details');
+        if (details) {
+          const row = document.createElement('div');
+          row.className = 'tool-activity-detail-row';
+          row.innerHTML = `<span class="key">Result</span><span>${escapeHtml(activity.text)}</span>`;
+          details.appendChild(row);
         }
       }
       return;
@@ -346,8 +411,8 @@
         <div class="approval-command">${escapeHtml(request.whatWillRun)}</div>
         <div class="approval-desc">${escapeHtml(request.why)}</div>
         <div class="approval-buttons">
-          <button class="approve-btn" data-action="approve">Approve</button>
-          <button class="deny-btn" data-action="deny">Deny</button>
+          <button class="approve-btn" data-action="approve">Approve once</button>
+          <button class="deny-btn" data-action="deny">Reject</button>
         </div>
       `;
       el.querySelector('[data-action="approve"]').addEventListener('click', () => {
@@ -397,17 +462,37 @@
       els.filesPanel.innerHTML = '<div class="empty-state">No files found</div>';
       return;
     }
-    els.filesPanel.innerHTML = files.map((f) => `
-      <div class="file-item" data-path="${escapeHtml(f.path)}">
-        <span class="file-icon">${f.isDirectory ? '&#128193;' : '&#128196;'}</span>
-        <span class="file-name">${escapeHtml(f.name)}</span>
-      </div>
-    `).join('');
-    els.filesPanel.querySelectorAll('.file-item').forEach((el) => {
-      el.addEventListener('click', () => {
-        post({ type: 'openFile', path: el.dataset.path });
+    state.files = files;
+    const renderList = (filter) => {
+      const q = (filter || '').toLowerCase();
+      const filtered = q ? files.filter((f) => f.path.toLowerCase().includes(q)) : files;
+      const listHtml = filtered.length === 0
+        ? '<div class="empty-state">No matching files</div>'
+        : filtered.map((f) => `
+          <div class="file-item" data-path="${escapeHtml(f.path)}">
+            <span class="file-icon">${f.isDirectory ? '&#128193;' : '&#128196;'}</span>
+            <span class="file-name">${escapeHtml(f.path)}</span>
+          </div>
+        `).join('');
+      const listEl = els.filesPanel.querySelector('.files-list');
+      if (listEl) listEl.innerHTML = listHtml;
+      els.filesPanel.querySelectorAll('.file-item').forEach((el) => {
+        el.addEventListener('click', () => {
+          post({ type: 'openFile', path: el.dataset.path });
+        });
       });
-    });
+    };
+    els.filesPanel.innerHTML = `
+      <div class="files-search">
+        <input type="text" id="files-search-input" placeholder="Search files..." />
+      </div>
+      <div class="files-list"></div>
+    `;
+    const searchInput = els.filesPanel.querySelector('#files-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => renderList(searchInput.value));
+    }
+    renderList('');
   }
 
   // ===== TERMINAL PANEL =====
@@ -532,7 +617,19 @@
         </div>
         <div style="font-size:0.8em;color:var(--text-muted)">Keys are stored securely in VS Code secret storage, never in the webview.</div>
       </div>
+      <div class="settings-section">
+        <button id="open-vscode-settings" style="padding:6px 10px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;font-size:0.9em;">Open VS Code settings</button>
+        <button id="uninstall-btn" style="margin-top:6px;padding:6px 10px;background:var(--bg-elevated);border:1px solid var(--error);border-radius:var(--radius-sm);color:var(--error);cursor:pointer;font-size:0.9em;">Uninstall Verteon</button>
+      </div>
     `;
+    const openVsSettings = els.settingsPanel.querySelector('#open-vscode-settings');
+    if (openVsSettings) {
+      openVsSettings.addEventListener('click', () => post({ type: 'openSettings' }));
+    }
+    const uninstallBtn = els.settingsPanel.querySelector('#uninstall-btn');
+    if (uninstallBtn) {
+      uninstallBtn.addEventListener('click', () => post({ type: 'uninstall' }));
+    }
     // Wire settings controls
     const bind = (id, key, isCheckbox) => {
       const el = $(id);
@@ -571,6 +668,7 @@
         state.provider = msg.provider || state.provider;
         updateProviderUI();
         renderProviderPanel();
+        renderModelSelector();
         updateAgentStatus(state.agentRunning ? 'running' : (state.connected ? 'ready' : 'error'), state.statusMessage);
         const footerPs = $('footer-provider-status');
         if (footerPs) footerPs.textContent = `Provider: ${state.provider} ${state.connected ? '(connected)' : '(offline)'}`;
@@ -584,9 +682,10 @@
         break;
       case 'agentStart':
         state.agentRunning = true;
+        state.toolCount = 0;
         finishStreaming();
         updateAgentStatus('running', 'Processing...');
-        els.composerSend.disabled = true;
+        updateSendState();
         els.stopBtn.classList.remove('hidden');
         break;
       case 'activity':
@@ -599,14 +698,21 @@
         state.agentRunning = false;
         finishStreaming();
         updateAgentStatus('completed');
-        els.composerSend.disabled = false;
+        updateSendState();
         els.stopBtn.classList.add('hidden');
+        break;
+      case 'planUpdate':
+        state.plan = msg.plan;
+        renderChecklist();
+        break;
+      case 'summary':
+        showSummary(msg.summary);
         break;
       case 'agentStopped':
         state.agentRunning = false;
         finishStreaming();
         updateAgentStatus('cancelled', msg.reason);
-        els.composerSend.disabled = false;
+        updateSendState();
         els.stopBtn.classList.add('hidden');
         break;
       case 'approvalRequest':
@@ -649,6 +755,7 @@
       case 'workspaceInfo':
         state.workspaceRoot = msg.root || '';
         state.workspaceName = msg.name || '';
+        state.projectType = msg.projectType || '';
         updateWorkspaceInfo();
         const footerWs = $('footer-workspace');
         if (footerWs) footerWs.textContent = state.workspaceName || 'No workspace';
@@ -662,10 +769,97 @@
       case 'recentList':
         renderRecentList(msg.recent);
         break;
+      case 'authState':
+        state.authenticated = msg.authenticated;
+        applyAuthState();
+        break;
+      case 'defaultModels':
+        state.defaultModels = msg.models || [];
+        if (msg.provider) state.provider = msg.provider;
+        if (msg.current) state.model = msg.current;
+        renderModelSelector();
+        updateProviderUI();
+        break;
+      case 'terminalOutput':
+        appendTerminalLine(msg.text, msg.cls || '');
+        break;
+      case 'terminalCommandResult':
+        state.terminalRunning = false;
+        state.terminalStatus = msg.ok ? 'Completed' : 'Failed';
+        state.terminalCwd = msg.cwd || '';
+        updateTerminalUI();
+        if (msg.ok) {
+          appendTerminalLine('Exit code: ' + (msg.exitCode ?? 0), 'success');
+        } else {
+          appendTerminalLine('Error: ' + (msg.error || 'unknown'), 'err');
+        }
+        break;
+      case 'terminalProcessStarted':
+        state.terminalRunning = true;
+        state.terminalStatus = 'Running';
+        state.terminalCwd = msg.cwd || '';
+        updateTerminalUI();
+        appendTerminalLine('$ ' + msg.command, 'cmd');
+        break;
+      case 'terminalProcessStopped':
+        state.terminalRunning = false;
+        state.terminalStatus = 'Stopped';
+        updateTerminalUI();
+        appendTerminalLine('[process stopped]', 'running');
+        break;
+      case 'environmentInfo':
+        state.environment = msg.environment;
+        break;
     }
   });
 
   // ===== EVENT WIRING =====
+  // ===== TERMINAL PANEL =====
+  function runTerminalCommand() {
+    const cmd = els.terminalCommandInput.value.trim();
+    if (!cmd) return;
+    if (state.terminalRunning) {
+      post({ type: 'error', text: 'A command is already running. Stop it first.' });
+      return;
+    }
+    state.terminalRunning = true;
+    state.terminalStatus = 'Running';
+    state.terminalCommandHistory.unshift(cmd);
+    state.terminalHistoryIndex = -1;
+    updateTerminalUI();
+    post({ type: 'runTerminalCommand', command: cmd });
+  }
+
+  function navigateTerminalHistory(dir) {
+    if (state.terminalCommandHistory.length === 0) return;
+    let idx = state.terminalHistoryIndex + dir;
+    if (idx < -1) idx = -1;
+    if (idx >= state.terminalCommandHistory.length) idx = state.terminalCommandHistory.length - 1;
+    state.terminalHistoryIndex = idx;
+    if (idx === -1) {
+      els.terminalCommandInput.value = '';
+    } else {
+      els.terminalCommandInput.value = state.terminalCommandHistory[idx];
+    }
+  }
+
+  function updateTerminalUI() {
+    if (els.terminalStatus) els.terminalStatus.textContent = state.terminalStatus;
+    if (els.terminalRunBtn) els.terminalRunBtn.disabled = state.terminalRunning;
+    if (els.terminalStopBtn) els.terminalStopBtn.classList.toggle('hidden', !state.terminalRunning);
+    if (els.terminalCwd) els.terminalCwd.textContent = state.terminalCwd || '';
+  }
+
+  function appendTerminalLine(text, cls) {
+    const line = document.createElement('div');
+    line.className = 'terminal-line ' + (cls || '');
+    line.textContent = text;
+    if (els.terminalLiveOutput) {
+      els.terminalLiveOutput.appendChild(line);
+      els.terminalLiveOutput.scrollTop = els.terminalLiveOutput.scrollHeight;
+    }
+  }
+
   function init() {
     // Navigation
     document.querySelectorAll('.nav-item').forEach((el) => {
@@ -676,6 +870,25 @@
     els.providerSelector.addEventListener('click', () => {
       post({ type: 'toggleProviderPanel' });
     });
+
+    // Model selector
+    if (els.modelSelector) {
+      els.modelSelector.addEventListener('change', () => {
+        post({ type: 'selectModel', model: els.modelSelector.value });
+      });
+    }
+
+    // Landing page buttons
+    if (els.signinGroqBtn) {
+      els.signinGroqBtn.addEventListener('click', () => {
+        post({ type: 'requestGroqKey' });
+      });
+    }
+    if (els.loginOllamaBtn) {
+      els.loginOllamaBtn.addEventListener('click', () => {
+        post({ type: 'login', provider: 'ollama' });
+      });
+    }
 
     // New task
     const newTaskBtn = $('new-task-btn');
@@ -694,6 +907,31 @@
         sendMessage();
       }
     });
+    els.composerInput.addEventListener('input', updateSendState);
+    updateSendState();
+
+    // Terminal panel
+    if (els.terminalRunBtn) {
+      els.terminalRunBtn.addEventListener('click', runTerminalCommand);
+    }
+    if (els.terminalStopBtn) {
+      els.terminalStopBtn.addEventListener('click', () => {
+        post({ type: 'stopProcess' });
+      });
+    }
+    if (els.terminalCommandInput) {
+      els.terminalCommandInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          runTerminalCommand();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          navigateTerminalHistory(-1);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          navigateTerminalHistory(1);
+        }
+      });
+    }
 
     // Stop button
     els.stopBtn.addEventListener('click', () => {
@@ -720,11 +958,121 @@
     post({ type: 'getWorkspaceInfo' });
   }
 
+  function updateSendState() {
+    els.composerSend.disabled = state.agentRunning || !els.composerInput.value.trim();
+  }
+
+  // ===== CHECKLIST & SUMMARY =====
+  function renderChecklist() {
+    if (!state.plan || !state.plan.steps || state.plan.steps.length === 0) {
+      els.checklistSection.style.display = 'none';
+      return;
+    }
+    els.checklistSection.style.display = 'block';
+    const list = els.checklistList;
+    list.innerHTML = '';
+    const statusIcon = {
+      pending: '○',
+      in_progress: '◎',
+      completed: '✓',
+      blocked: '⊘',
+      failed: '✗',
+    };
+    for (const step of state.plan.steps) {
+      const icon = statusIcon[step.status] || '○';
+      const row = document.createElement('div');
+      row.className = `checklist-step ${step.status}`;
+      row.innerHTML = `
+        <span class="checklist-icon">${icon}</span>
+        <div class="checklist-body">
+          <div class="checklist-title">${escapeHtml(step.title)}</div>
+          ${step.detail ? `<div class="checklist-detail">${escapeHtml(step.detail)}</div>` : ''}
+        </div>
+      `;
+      list.appendChild(row);
+    }
+  }
+
+  function showSummary(summary) {
+    state.summary = summary;
+    const panel = els.summaryPanel;
+    const statusClass = summary.status || 'completed';
+    panel.innerHTML = `
+      <div class="summary-header">
+        <span class="summary-status ${statusClass}">${statusClass}</span>
+        <h3>Task summary</h3>
+      </div>
+      <div class="summary-section">
+        <div class="summary-label">Result</div>
+        <div class="summary-value">${escapeHtml(summary.result || 'No result text.')}</div>
+      </div>
+      ${summary.changes && summary.changes.length ? `
+        <div class="summary-section">
+          <div class="summary-label">Changes</div>
+          <ul class="summary-list">
+            ${summary.changes.map((c) => `<li>${escapeHtml(c)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      ${summary.filesChanged && summary.filesChanged.length ? `
+        <div class="summary-section">
+          <div class="summary-label">Files changed</div>
+          <ul class="summary-list">
+            ${summary.filesChanged.map((f) => `<li>${escapeHtml(f)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      ${summary.validation && summary.validation.length ? `
+        <div class="summary-section">
+          <div class="summary-label">Validation</div>
+          <ul class="summary-list">
+            ${summary.validation.map((v) => `<li class="${v.passed ? 'pass' : 'fail'}">${escapeHtml(v.label)}: ${v.passed ? 'passed' : 'failed'}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      ${summary.commandsRun && summary.commandsRun.length ? `
+        <div class="summary-section">
+          <div class="summary-label">Commands run</div>
+          <ul class="summary-list">
+            ${summary.commandsRun.map((c) => `<li>${escapeHtml(c)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      ${summary.issues && summary.issues.length ? `
+        <div class="summary-section">
+          <div class="summary-label">Issues</div>
+          <ul class="summary-list">
+            ${summary.issues.map((i) => `<li>${escapeHtml(i)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      ${summary.remainingWork && summary.remainingWork.length ? `
+        <div class="summary-section">
+          <div class="summary-label">Remaining work</div>
+          <ul class="summary-list">
+            ${summary.remainingWork.map((r) => `<li>${escapeHtml(r)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      ${summary.securityNotes && summary.securityNotes.length ? `
+        <div class="summary-section">
+          <div class="summary-label">Security notes</div>
+          <ul class="summary-list">
+            ${summary.securityNotes.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+    `;
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   function sendMessage() {
     const text = els.composerInput.value.trim();
     if (!text) return;
     if (state.agentRunning) return;
     els.composerInput.value = '';
+    updateSendState();
     post({ type: 'sendMessage', text });
   }
 

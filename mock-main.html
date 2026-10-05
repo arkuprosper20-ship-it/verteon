@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link href="media/main.css" rel="stylesheet" />
+  <title>Verteon — Main UI</title>
+  <style>
+    body { width: 1180px; height: 700px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="top-header">
+      <div id="header-brand">
+        <span class="logo-mark">&#9670;</span>
+        <span class="brand-name">Verteon</span>
+      </div>
+      <div id="header-controls">
+        <select id="model-selector">
+          <option>qwen2.5-coder:7b</option>
+          <option>qwen2.5-coder:14b</option>
+          <option>llama3.1:8b</option>
+          <option>codellama:7b</option>
+          <option>deepseek-coder-v2:16b</option>
+        </select>
+        <button id="provider-selector" title="Switch AI provider">
+          <span id="provider-status-dot" class="status-dot connected"></span>
+          <span id="provider-name">ollama</span>
+          <span class="caret">&#9662;</span>
+        </button>
+      </div>
+    </div>
+    <div id="landing-view" style="display:none"></div>
+    <div id="main-layout">
+      <div id="sidebar">
+        <div id="sidebar-brand">
+          <span class="logo-mark">&#9670;</span>
+          <span>VERTEON</span>
+        </div>
+        <button id="new-task-btn">&#43; New Task</button>
+        <div id="sidebar-nav">
+          <div class="nav-section">Workspace</div>
+          <div class="nav-item active" data-view="agent"><span class="nav-icon">&#9672;</span>Agent</div>
+          <div class="nav-item" data-view="files"><span class="nav-icon">&#9708;</span>Files</div>
+          <div class="nav-item" data-view="terminal"><span class="nav-icon">&#9656;</span>Terminal</div>
+          <div class="nav-item" data-view="git"><span class="nav-icon">&#10038;</span>Git</div>
+          <div class="nav-item" data-view="settings"><span class="nav-icon">&#9881;</span>Settings</div>
+          <div class="nav-section">Recent</div>
+          <div id="recent-list">
+            <div class="recent-item">
+              <div class="recent-project">Fix failing tests in auth module</div>
+              <div class="recent-task">2h ago</div>
+            </div>
+            <div class="recent-item">
+              <div class="recent-project">Refactor API layer</div>
+              <div class="recent-task">1d ago</div>
+            </div>
+            <div class="recent-item">
+              <div class="recent-project">Inspect project structure</div>
+              <div class="recent-task">2d ago</div>
+            </div>
+          </div>
+        </div>
+        <div id="sidebar-footer">
+          <div class="workspace-status">&#128193; my-app</div>
+          <div class="provider-status"><span id="footer-provider-status">Provider: ollama (connected)</span></div>
+        </div>
+      </div>
+      <div id="main-agent">
+        <div id="agent-content">
+          <div class="chat-message user">
+            <div class="msg-label">You</div>
+            <div class="msg-body">Fix the failing tests in the auth module. Run the test suite to verify.</div>
+          </div>
+
+          <div class="tool-activity expanded">
+            <div class="tool-activity-header">
+              <div class="tool-activity-title">
+                <span class="tool-activity-status completed">&#10003; ok 88ms</span>
+                <span>readFile</span>
+              </div>
+              <span style="opacity:0.5;font-size:0.8em">&#9662;</span>
+            </div>
+            <div class="tool-activity-details">
+              <div class="tool-activity-detail-row"><span class="key">Tool</span><span>readFile</span></div>
+              <div class="tool-activity-detail-row"><span class="key">Result</span><span>src/auth/session.ts (412 lines)</span></div>
+            </div>
+          </div>
+
+          <div class="tool-activity">
+            <div class="tool-activity-header">
+              <div class="tool-activity-title">
+                <span class="tool-activity-status completed">&#10003; ok 1.2s</span>
+                <span>runTests</span>
+              </div>
+              <span style="opacity:0.5;font-size:0.8em">&#9662;</span>
+            </div>
+            <div class="tool-activity-details">
+              <div class="tool-activity-detail-row"><span class="key">Tool</span><span>runTests</span></div>
+              <div class="tool-activity-detail-row"><span class="key">Result</span><span>3 failing, 12 passing</span></div>
+            </div>
+          </div>
+
+          <div class="terminal-block">
+            <div class="terminal-block-header">
+              <span>Terminal</span>
+              <span style="opacity:0.5;font-size:0.8em">runTests</span>
+            </div>
+            <div class="terminal-block-body"><span class="cmd">$ npm test</span>
+<span class="error">FAIL src/auth/session.test.ts</span>
+  &#10007; refreshes session on token rotation
+  &#10007; rejects expired tokens
+  &#10007; handles missing cookies
+<span class="success">Tests: 12 passed, 3 failed</span></div>
+          </div>
+
+          <div class="tool-activity">
+            <div class="tool-activity-header">
+              <div class="tool-activity-title">
+                <span class="tool-activity-status failed">&#10007; FAILED 340ms</span>
+                <span>applyEdit</span>
+              </div>
+              <span style="opacity:0.5;font-size:0.8em">&#9662;</span>
+            </div>
+            <div class="tool-activity-details">
+              <div class="tool-activity-detail-row"><span class="key">Tool</span><span>applyEdit</span></div>
+              <div class="tool-activity-detail-row"><span class="key">Result</span><span>Edit conflict: file changed on disk</span></div>
+            </div>
+          </div>
+
+          <div class="approval-card">
+            <div class="approval-title">&#9888; Approval Required</div>
+            <div class="approval-command">$ npm install express</div>
+            <div class="approval-desc">This command modifies dependencies, files, or repository state.</div>
+            <div class="approval-buttons">
+              <button class="approve-btn">Approve once</button>
+              <button class="deny-btn">Reject</button>
+            </div>
+          </div>
+
+          <div class="chat-message assistant">
+            <div class="msg-label">Assistant</div>
+            <div class="msg-body">I found 3 failing tests in src/auth/session.test.ts. The session refresh logic doesn't handle token rotation correctly. I'll fix the assertion in session.ts next.</div>
+          </div>
+        </div>
+        <div id="composer">
+          <div id="composer-input-wrapper">
+            <textarea id="composer-input" placeholder="Ask the agent to inspect, edit, or fix something..." rows="2"></textarea>
+            <div id="composer-toolbar">
+              <div id="composer-actions">
+                <button id="new-chat-btn" title="New chat">New</button>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button id="stop-btn" title="Stop agent">Stop</button>
+                <button id="composer-send" title="Send" disabled>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="activity-panel">
+        <div id="activity-panel-header">Activity</div>
+        <div id="activity-panel-content">
+          <div class="activity-section">
+            <div class="activity-section-title">Agent Status</div>
+            <div id="agent-status">
+              <div class="status-row">
+                <span class="status-label">Status</span>
+                <span class="status-value">
+                  <span class="dot running"></span>
+                  Running - 2 tools
+                </span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Provider</span>
+                <span class="status-value" style="font-weight:400;font-size:0.85em">ollama</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Model</span>
+                <span class="status-value" style="font-weight:400;font-size:0.85em">qwen2.5-coder:7b</span>
+              </div>
+            </div>
+          </div>
+          <div class="activity-section">
+            <div class="activity-section-title">Workspace</div>
+            <div id="workspace-info">
+              <div class="workspace-name">&#128193; my-app</div>
+              <div class="info-row"><span>Path</span><span class="value">/home/user/my-app</span></div>
+              <div class="info-row"><span>Type</span><span class="value">Node.js</span></div>
+              <div class="info-row"><span>Branch</span><span class="value">main</span></div>
+              <div class="git-status dirty">&#9888; 3 changes</div>
+            </div>
+          </div>
+          <div class="activity-section">
+            <div class="activity-section-title">Live Activity</div>
+            <div id="live-activity">
+              <div class="live-activity-item">
+                <div class="activity-title">
+                  <span class="activity-icon completed">&#10003;</span>
+                  readFile
+                </div>
+                <div class="activity-detail">ok 88ms</div>
+              </div>
+              <div class="live-activity-item">
+                <div class="activity-title">
+                  <span class="activity-icon completed">&#10003;</span>
+                  runTests
+                </div>
+                <div class="activity-detail">ok 1.2s</div>
+              </div>
+              <div class="live-activity-item">
+                <div class="activity-title">
+                  <span class="activity-icon running">&#9654;</span>
+                  runCommand
+                </div>
+                <div class="activity-detail">npm install express</div>
+              </div>
+              <div class="live-activity-item">
+                <div class="activity-title">
+                  <span class="activity-icon failed">&#10007;</span>
+                  applyEdit
+                </div>
+                <div class="activity-detail">FAILED 340ms</div>
+              </div>
+            </div>
+          </div>
+          <div class="activity-section">
+            <div class="activity-section-title">Provider</div>
+            <div id="provider-panel" class="provider-list">
+              <div class="provider-item selected">
+                <div class="provider-radio"></div>
+                <div class="provider-info">
+                  <div class="provider-name">Ollama</div>
+                  <div class="provider-model">Local models</div>
+                </div>
+                <div class="provider-status connected">Connected</div>
+              </div>
+              <div class="provider-item">
+                <div class="provider-radio"></div>
+                <div class="provider-info">
+                  <div class="provider-name">Groq</div>
+                  <div class="provider-model">Cloud inference</div>
+                </div>
+                <div class="provider-status not-configured"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

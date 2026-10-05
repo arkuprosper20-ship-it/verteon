@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link href="media/main.css" rel="stylesheet" />
+  <title>Verteon — Landing</title>
+  <style>
+    body { width: 1000px; height: 640px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="top-header">
+      <div id="header-brand">
+        <span class="logo-mark">&#9670;</span>
+        <span class="brand-name">Verteon</span>
+      </div>
+      <div id="header-controls">
+        <select id="model-selector" style="display:none"></select>
+        <button id="provider-selector" title="Switch AI provider">
+          <span id="provider-status-dot" class="status-dot unknown"></span>
+          <span id="provider-name">ollama</span>
+          <span class="caret">&#9662;</span>
+        </button>
+      </div>
+    </div>
+    <div id="landing-view">
+      <div class="landing-inner">
+        <div class="landing-logo">&#9670;</div>
+        <h1 class="landing-title">Verteon</h1>
+        <p class="landing-tagline">Your AI coding assistant inside VS Code.</p>
+        <div class="landing-section">
+          <div class="landing-section-title">What it does</div>
+          <ul class="landing-features">
+            <li>Inspect your project structure, framework, and tooling</li>
+            <li>Edit files with native VS Code diff review</li>
+            <li>Run commands, tests, and builds safely</li>
+            <li>Fix errors autonomously with a hard safety boundary</li>
+          </ul>
+        </div>
+        <div class="landing-section">
+          <div class="landing-section-title">How it works</div>
+          <ol class="landing-steps">
+            <li>Choose a provider below</li>
+            <li>Ask Verteon to inspect, edit, or fix your project</li>
+            <li>Review and approve any risky operation</li>
+          </ol>
+        </div>
+        <div class="landing-actions">
+          <button id="signin-groq-btn" class="landing-btn primary">Sign in with Groq</button>
+          <button id="login-ollama-btn" class="landing-btn secondary">Log in with Ollama (local)</button>
+        </div>
+        <div class="landing-security">
+          <div class="landing-security-title">Security</div>
+          <ul>
+            <li>Destructive commands are blocked by default</li>
+            <li>File edits and commands require your approval</li>
+            <li>API keys stored in VS Code secret storage</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div id="main-layout" class="hidden"></div>
+  </div>
+</body>
+</html>

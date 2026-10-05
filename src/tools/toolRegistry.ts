@@ -4,10 +4,12 @@ import { filesystemTools } from './filesystemTools';
 import { editorTools } from './editorTools';
 import { terminalTools } from './terminalTools';
 import { projectTools } from './projectTools';
+import { planningTools } from './planningTools';
 import { testingTools, gitTools } from './testingAndGitTools';
 
 export function buildToolRegistry(config: AgentConfig): ToolDefinition[] {
   const tools: ToolDefinition[] = [
+    ...planningTools,
     ...filesystemTools,
     ...editorTools,
     ...terminalTools,

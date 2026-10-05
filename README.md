@@ -292,6 +292,7 @@ src/
     terminalTools.ts      command execution, process control, output capture
     projectTools.ts       framework / package manager / workspace / git detection
     testingAndGitTools.ts build, test, lint, git status, diff, log
+    planningTools.ts      updatePlan (checklist) and summarizeTask tools
   security/
     commandSafety.ts      safe / approval / blocked classification
     secretDetection.ts    sensitive paths and credential redaction
@@ -308,8 +309,10 @@ src/
 media/
   icon.svg                Verteon mark
   main.css  main.js       webview styles and behaviour
+  landing.png  main.png   rendered wireframe previews
 test/suite/               command safety, secret detection, agent loop
 docs/                     architecture, security, roadmap
+website/                  marketing site (Firebase + Vercel host)
 ```
 
 `agents/` and `tasks/` hold storage-backed managers that are wired into the extension but not yet

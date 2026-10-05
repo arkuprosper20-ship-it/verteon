@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Releases - Verteon</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand">
+                    <svg width="28" height="28" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="currentColor" d="M8 1a1 1 0 0 1 1 1v1.06A5.5 5.5 0 0 1 13.94 8H15a1 1 0 1 1 0 2h-1.06A5.5 5.5 0 0 1 9 14.94V16a1 1 0 1 1-2 0v-1.06A5.5 5.5 0 0 1 2.06 10H1a1 1 0 1 1 0-2h1.06A5.5 5.5 0 0 1 7 3.06V2a1 1 0 0 1 1-1Zm0 3.5A4.5 4.5 0 1 0 8 13a4.5 4.5 0 0 0 0-8.5ZM6.75 6.5h2.5a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-.75.75h-2.5A.75.75 0 0 1 6 9.75v-2.5a.75.75 0 0 1 .75-.75Z"/>
+                    </svg>
+                    <span>Verteon<span class="accent">.</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="download.html" class="nav-link">Download</a></li>
+                    <li><a href="docs.html" class="nav-link">Docs</a></li>
+                    <li><a href="releases.html" class="nav-link">Releases</a></li>
+                    <li><a href="signin.html" class="nav-link">Sign in</a></li>
+                    <li><a href="signup.html" class="nav-link btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.875rem;">Get Started</a></li>
+                </ul>
+                <button class="nav-toggle" id="navToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <section style="padding: 120px 0 60px;">
+            <div class="container" style="max-width: 820px;">
+                <p class="caption" style="letter-spacing: 1px; text-transform: uppercase;">Release history</p>
+                <h1 class="h2 mt-1">Changelog</h1>
+                <p class="p mt-2" style="color: var(--text-tertiary);">
+                    All notable changes to the Verteon VS Code extension.
+                </p>
+
+                <div class="glass-card mt-4" style="padding: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);">
+                        <div style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; font-size: 1.25rem;">v0.2.0</div>
+                        <span class="caption" style="color: var(--text-tertiary);">2026-10-05</span>
+                        <a href="https://github.com/arkuprosper20-ship-it/verteon/releases/tag/v0.2.0" class="btn btn-outline" style="margin-left: auto; padding: 0.4rem 1rem; font-size: 0.8rem;">View on GitHub</a>
+                    </div>
+                    <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-secondary);">Major feature release — three-column workspace, multi-provider, safety system</h3>
+                    <div class="grid grid-2">
+                        <ul style="space-y: 0.5rem;">
+                            <li style="margin-bottom: 0.5rem;"><strong>Workspace:</strong> Three-column layout with sidebar, agent workspace, and live activity panel</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Providers:</strong> Ollama (local, default) and Groq (cloud) with live health checks</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Tools:</strong> 32 tools across filesystem, editor, terminal, project, build/test/lint, git</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Safety:</strong> Three-tier command classification (safe, approval, blocked)</li>
+                        </ul>
+                        <ul style="space-y: 0.5rem;">
+                            <li style="margin-bottom: 0.5rem;"><strong>Secrets:</strong> Redaction + sensitive-file refusal, keys in VS Code SecretStorage</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Diff review:</strong> Native VS Code diff before edits apply</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>History:</strong> Conversation restore and project memory</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Responsive:</strong> Drawers on mobile, three columns on desktop</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card mt-4" style="padding: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);">
+                        <div style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; font-size: 1.25rem;">v0.1.0</div>
+                        <span class="caption" style="color: var(--text-tertiary);">2026-09-08</span>
+                        <a href="https://github.com/arkuprosper20-ship-it/verteon/releases/tag/v0.1.0" class="btn btn-outline" style="margin-left: auto; padding: 0.4rem 1rem; font-size: 0.8rem;">View on GitHub</a>
+                    </div>
+                    <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-secondary);">Initial release — Ollama-only agent with basic tool calling</h3>
+                    <ul style="space-y: 0.5rem;">
+                        <li style="margin-bottom: 0.5rem;">Ollama provider with local model support</li>
+                        <li style="margin-bottom: 0.5rem;">Basic agent loop with tool calling (filesystem, terminal)</li>
+                        <li style="margin-bottom: 0.5rem;">Simple approval prompt for commands</li>
+                        <li style="margin-bottom: 0.5rem;">Webview-based UI with composer</li>
+                    </ul>
+                </div>
+
+                <div class="text-center mt-6">
+                    <a href="https://github.com/arkuprosper20-ship-it/verteon/releases" class="btn btn-primary" style="text-decoration: none;">All releases on GitHub</a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-surface" style="padding: 4rem 0 2rem;">
+            <div class="container">
+                <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                    <p style="color: var(--text-tertiary); font-size: 0.875rem;">&copy; 2026 Verteon. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.querySelector('.nav-links');
+        navToggle.addEventListener('click', () => {
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.glass-card').forEach((el, i) => {
+            el.classList.add('stagger-' + ((i % 5) + 1));
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "verteon-website",
+  "version": "1.0.0",
+  "description": "Verteon AI Coding Agent for VS Code - Public Website",
+  "main": "index.html",
+  "scripts": {
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel --preview"
+  },
+  "keywords": [
+    "verteon",
+    "ai",
+    "coding",
+    "vscode",
+    "ollama",
+    "extension"
+  ],
+  "author": "Verteon Team",
+  "license": "MIT",
+  "type": "commonjs"
+}

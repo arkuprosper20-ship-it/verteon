@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Verteon</title>
+    <meta name="description" content="Create a Verteon account to install the VS Code extension and follow the setup guide.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand">
+                    Verteon <span>.</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="index.html#how-it-works" class="nav-link">How it works</a></li>
+                    <li><a href="download.html" class="nav-link">Download</a></li>
+                    <li><a href="docs.html" class="nav-link">Docs</a></li>
+                    <li><a href="signin.html" class="nav-link">Sign in</a></li>
+                    <li><a href="signup.html" class="nav-link btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.875rem;">Get Started</a></li>
+                </ul>
+                <button class="nav-toggle" id="navToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Signup Form -->
+        <section class="hero" style="min-height: 100vh; padding: 120px 0 60px;">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h1 class="h2">Create your account</h1>
+                    <p class="p" style="color: var(--text-tertiary);">Create an account to get the install command and the setup guide.</p>
+                </div>
+                <div class="glass-card" style="max-width: 500px; margin: 0 auto; padding: 3rem;">
+                    <form id="signupForm" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="name">Full Name</label>
+                            <input type="text" id="name" class="form-input" placeholder="John Doe" autocomplete="name" required>
+                            <div class="error-message" id="nameError" style="color: #f85149; font-size: 0.875rem; margin-top: 0.5rem; display: none;">Name is required</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address</label>
+                            <input type="email" id="email" class="form-input" placeholder="you@example.com" autocomplete="email" required>
+                            <div class="error-message" id="emailError" style="color: #f85149; font-size: 0.875rem; margin-top: 0.5rem; display: none;">Please enter a valid email</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="password">Password</label>
+                            <input type="password" id="password" class="form-input" placeholder="At least 8 characters" autocomplete="new-password" required>
+                            <div class="error-message" id="passwordError" style="color: #f85149; font-size: 0.875rem; margin-top: 0.5rem; display: none;">Password must be at least 8 characters</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your password" autocomplete="new-password" required>
+                            <div class="error-message" id="confirmPasswordError" style="color: #f85149; font-size: 0.875rem; margin-top: 0.5rem; display: none;">Passwords do not match</div>
+                        </div>
+
+                        <div id="formAlert" style="display: none; margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm); background: rgba(248, 81, 73, 0.12); border: 1px solid rgba(248, 81, 73, 0.35); color: #fca5a5; font-size: 0.875rem;" role="alert"></div>
+
+                        <button type="submit" class="btn btn-primary" id="submitBtn" style="width: 100%; margin-top: 1rem;">Create Account</button>
+                        <p class="caption mt-2" style="text-align: center;">Next stop: the setup guide.</p>
+                    </form>
+                    <div style="margin-top: 2rem; text-align: center; padding-top: 2rem; border-top: 1px solid var(--border);">
+                        <p style="color: var(--text-tertiary); font-size: 0.875rem;">Already have an account? <a href="signin.html" style="color: var(--primary-light); text-decoration: none;">Sign in</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-surface" style="padding: 4rem 0 2rem;">
+            <div class="container">
+                <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                    <p style="color: var(--text-tertiary); font-size: 0.875rem;">&copy; 2026 Verteon. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module">
+        import {
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            updateProfile,
+            auth,
+            describeAuthError
+        } from './assets/js/firebase-config.js';
+        import { recordSignup, wireChrome } from './assets/js/app-auth.js';
+        import { showToast, setLoading, wireCopyButtons } from './assets/js/ui-utils.js';
+
+        wireChrome(null);
+        wireCopyButtons();
+
+        const form = document.getElementById('signupForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const alertBox = document.getElementById('formAlert');
+
+        const el = (id) => document.getElementById(id);
+        const showError = (id, show) => { el(id).style.display = show ? 'block' : 'none'; };
+        const setAlert = (message) => {
+            if (!message) { alertBox.style.display = 'none'; return; }
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+        };
+
+        const validEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            setAlert('');
+
+            const name = el('name').value.trim();
+            const email = el('email').value.trim();
+            const password = el('password').value;
+            const confirmPassword = el('confirmPassword').value;
+
+            let valid = true;
+            if (!name) { showError('nameError', true); valid = false; } else { showError('nameError', false); }
+            if (!validEmail(email)) { showError('emailError', true); valid = false; } else { showError('emailError', false); }
+            if (password.length < 8) { showError('passwordError', true); valid = false; } else { showError('passwordError', false); }
+            if (!confirmPassword || password !== confirmPassword) { showError('confirmPasswordError', true); valid = false; } else { showError('confirmPasswordError', false); }
+            if (!valid) return;
+
+            setLoading(submitBtn, true, 'Create Account');
+
+            try {
+                const credential = await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(credential.user, { displayName: name });
+                await signInWithEmailAndPassword(auth, email, password);
+                recordSignup(credential.user);
+
+                const params = new URLSearchParams(window.location.search);
+                const next = params.get('next');
+                window.location.replace(next ? next : 'onboarding.html');
+            } catch (err) {
+                setAlert(describeAuthError(err.code));
+                showToast(describeAuthError(err.code), 'error');
+                setLoading(submitBtn, false, 'Create Account');
+            }
+        });
+
+        el('name').addEventListener('input', () => { if (el('name').value.trim()) showError('nameError', false); });
+        el('email').addEventListener('input', () => { if (validEmail(el('email').value.trim())) showError('emailError', false); });
+        el('password').addEventListener('input', () => {
+            if (el('password').value.length >= 8) showError('passwordError', false);
+            const confirm = el('confirmPassword').value;
+            if (confirm && el('password').value === confirm) showError('confirmPasswordError', false);
+        });
+        el('confirmPassword').addEventListener('input', () => {
+            if (el('confirmPassword').value === el('password').value) showError('confirmPasswordError', false);
+        });
+    </script>
+</body>
+</html>

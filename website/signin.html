@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Verteon</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand">
+                    Verteon <span>.</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="download.html" class="nav-link">Download</a></li>
+                    <li><a href="docs.html" class="nav-link">Docs</a></li>
+                    <li><a href="signin.html" class="nav-link">Sign in</a></li>
+                    <li><a href="signup.html" class="nav-link btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.875rem;">Get Started</a></li>
+                </ul>
+                <button class="nav-toggle" id="navToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <section class="hero" style="min-height: 100vh; padding: 120px 0 60px;">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h1 class="h2">Welcome back</h1>
+                    <p class="p" style="color: var(--text-tertiary);">Sign in to reach your dashboard and setup guide.</p>
+                </div>
+                <div class="glass-card" style="max-width: 500px; margin: 0 auto; padding: 3rem;">
+                    <form id="signinForm" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address</label>
+                            <input type="email" id="email" class="form-input" placeholder="you@example.com" autocomplete="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="password">Password</label>
+                            <input type="password" id="password" class="form-input" placeholder="Your password" autocomplete="current-password" required>
+                        </div>
+
+                        <div id="formAlert" style="display: none; margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm); background: rgba(248, 81, 73, 0.12); border: 1px solid rgba(248, 81, 73, 0.35); color: #fca5a5; font-size: 0.875rem;" role="alert"></div>
+
+                        <button type="submit" class="btn btn-primary" id="submitBtn" style="width: 100%; margin-top: 1rem;">Sign In</button>
+                    </form>
+                    <div style="margin-top: 2rem; text-align: center; padding-top: 2rem; border-top: 1px solid var(--border);">
+                        <p style="color: var(--text-tertiary); font-size: 0.875rem;">No account yet? <a href="signup.html" style="color: var(--primary-light); text-decoration: none;">Create one</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-surface" style="padding: 4rem 0 2rem;">
+            <div class="container">
+                <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                    <p style="color: var(--text-tertiary); font-size: 0.875rem;">&copy; 2026 Verteon. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module">
+        import {
+            signInWithEmailAndPassword,
+            auth,
+            describeAuthError
+        } from './assets/js/firebase-config.js';
+        import { wireChrome, loadProfile } from './assets/js/app-auth.js';
+        import { showToast, setLoading, wireCopyButtons } from './assets/js/ui-utils.js';
+
+        wireChrome(null);
+        wireCopyButtons();
+
+        const form = document.getElementById('signinForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const alertBox = document.getElementById('formAlert');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        const setAlert = (message) => {
+            if (!message) { alertBox.style.display = 'none'; return; }
+            alertBox.textContent = message;
+            alertBox.style.display = 'block';
+        };
+
+        // Where to go after a successful sign-in: the ?next= target when present,
+        // otherwise the guide for accounts that have not finished it.
+        function destination() {
+            const params = new URLSearchParams(window.location.search);
+            const next = params.get('next');
+            if (next) return next;
+            const profile = loadProfile();
+            return profile.guideCompleted ? 'dashboard.html' : 'onboarding.html';
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            setAlert('');
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            if (!email || !password) {
+                setAlert('Enter your email and password.');
+                return;
+            }
+
+            setLoading(submitBtn, true, 'Sign In');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.replace(destination());
+            } catch (err) {
+                setAlert(describeAuthError(err.code));
+                showToast(describeAuthError(err.code), 'error');
+                setLoading(submitBtn, false, 'Sign In');
+            }
+        });
+    </script>
+</body>
+</html>

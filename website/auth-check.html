@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth capability check</title>
+</head>
+<body style="font-family: ui-monospace, monospace; padding: 2rem;">
+    <h1>Firebase Auth capability check</h1>
+    <pre id="out">running...</pre>
+    <script type="module">
+        import {
+            auth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            describeAuthError
+        } from './assets/js/firebase-config.js';
+
+        const out = document.getElementById('out');
+        const lines = [];
+        const log = (s) => { lines.push(s); out.textContent = lines.join('\n'); };
+
+        const email = `verteon-authcheck-${Date.now()}@example.com`;
+        const password = 'VerteonCheck!2026';
+
+        log('module import: OK');
+
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+            log('CREATE_USER: OK uid=' + cred.user.uid);
+            window.__authCheck = { create: 'OK', testEmail: email };
+        } catch (err) {
+            log('CREATE_USER: FAIL code=' + err.code + ' | ' + describeAuthError(err.code));
+            log('message=' + err.message);
+            log('stack=' + (err.stack || '(none)').split('\n').slice(0, 6).join(' || '));
+            log('name=' + err.name);
+            window.__authCheck = { create: 'FAIL', code: err.code };
+        }
+
+        try {
+            await signOut();
+            log('SIGNOUT: OK');
+        } catch (err) {
+            log('SIGNOUT: FAIL ' + err.code);
+        }
+
+        try {
+            const cred = await signInWithEmailAndPassword(auth, email, password);
+            log('SIGNIN: OK uid=' + cred.user.uid + ' email=' + cred.user.email);
+            log('emailVerified=' + cred.user.emailVerified);
+            log('createdAt=' + new Date(cred.user.metadata.creationTime).toISOString());
+            await signOut();
+        } catch (err) {
+            log('SIGNIN: FAIL code=' + err.code);
+        }
+
+        log('TEST_EMAIL=' + email);
+        if (!window.__authCheck) window.__authCheck = { create: 'UNKNOWN' };
+    </script>
+</body>
+</html>

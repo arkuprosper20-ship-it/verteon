@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Guide - Verteon</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .guide-step {
+            display: grid;
+            grid-template-columns: 44px 1fr;
+            gap: 1.25rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .guide-step:last-of-type { border-bottom: none; }
+        .step-marker {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .guide-step.done .step-marker {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.5);
+            color: #4ade80;
+        }
+        .code-block {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 0.75rem 0;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-sm);
+            background: #0b1120;
+            border: 1px solid var(--border);
+            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            overflow-x: auto;
+        }
+        .progress-track {
+            height: 8px;
+            border-radius: 999px;
+            background: var(--surface-elevated);
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+        .check-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            margin-top: 0.75rem;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .check-row input { margin-top: 0.3rem; accent-color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand">Verteon <span>.</span></a>
+                <ul class="nav-links">
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="download.html" class="nav-link">Download</a></li>
+                    <li><a href="docs.html" class="nav-link">Docs</a></li>`n                    <li><a href="releases.html" class="nav-link">Releases</a></li>
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><span class="nav-link" id="navUser" style="color: var(--text-tertiary);"></span></li>
+                    <li><button class="nav-link btn btn-outline" id="signOutBtn" style="padding: 0.4rem 1rem; font-size: 0.8rem;" hidden>Sign out</button></li>
+                </ul>
+                <button class="nav-toggle" id="navToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <section style="padding: 120px 0 60px;">
+            <div class="container" style="max-width: 860px;">
+                <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2rem;">
+                    <p class="caption" style="letter-spacing: 1px; text-transform: uppercase;">Setup guide</p>
+                    <h1 class="h2 mt-1">Get Verteon running</h1>
+                    <p class="p mt-2" style="color: var(--text-tertiary);">
+                        Five steps from an empty VS Code install to an agent that can inspect your project,
+                        edit files, and run commands with you approving the risky parts.
+                    </p>
+
+                    <div class="mt-4">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-tertiary); margin-bottom: 0.5rem;">
+                            <span id="progressLabel">0 of 5 steps done</span>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 1rem 2.5rem 2rem;">
+                    <!-- Step 1 -->
+                    <div class="guide-step" data-step="install">
+                        <div class="step-marker">1</div>
+                        <div>
+                            <h2 class="h3">Install the extension</h2>
+                            <p class="p mt-1" style="color: var(--text-tertiary);">
+                                Download the <code>local-ai-agent-0.2.0.vsix</code> from the
+                                <a href="download.html" style="color: var(--primary-light);">download page</a>, then run:
+                            </p>
+                            <div class="code-block">
+                                <span>code --install-extension local-ai-agent-0.2.0.vsix</span>
+                                <button class="btn btn-outline" data-copy="code --install-extension local-ai-agent-0.2.0.vsix" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                            </div>
+                            <p class="caption" style="color: var(--text-tertiary);">
+                                Windows: run it from PowerShell. Everywhere else the binary may be <code>code</code>, <code>codium</code>, or <code>code-insiders</code>.
+                            </p>
+                            <label class="check-row"><input type="checkbox" data-check="install"> I installed the extension and can see the AI Agent icon in my Activity Bar.</label>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="guide-step" data-step="ollama">
+                        <div class="step-marker">2</div>
+                        <div>
+                            <h2 class="h3">Start Ollama and pull a coding model</h2>
+                            <p class="p mt-1" style="color: var(--text-tertiary);">
+                                Verteon runs fully local by default. Install
+                                <a href="https://ollama.com/download" target="_blank" rel="noopener" style="color: var(--primary-light);">Ollama</a>,
+                                leave it running, then pull a model:
+                            </p>
+                            <div class="code-block">
+                                <span>ollama pull qwen2.5-coder:7b</span>
+                                <button class="btn btn-outline" data-copy="ollama pull qwen2.5-coder:7b" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                            </div>
+                            <p class="caption" style="color: var(--text-tertiary);">
+                                No API key needed for Ollama. If you would rather use a cloud model, set the provider to Groq in Settings and paste the key into the panel — it is stored in VS Code secret storage.
+                            </p>
+                            <label class="check-row"><input type="checkbox" data-check="ollama"> Ollama is running and the model is pulled.</label>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="guide-step" data-step="open-panel">
+                        <div class="step-marker">3</div>
+                        <div>
+                            <h2 class="h3">Open the AI Agent panel</h2>
+                            <p class="p mt-1" style="color: var(--text-tertiary);">
+                                Click the AI Agent icon in the Activity Bar. The header shows a live
+                                provider dot: green means the health check succeeded, red means the
+                                provider is unreachable and the panel tells you why.
+                            </p>
+                            <p class="caption mt-1" style="color: var(--text-tertiary);">
+                                Open a folder first. Verteon reads and writes inside the workspace root, so an empty window is not enough.
+                            </p>
+                            <label class="check-row"><input type="checkbox" data-check="open-panel"> The panel is open and the status dot is green.</label>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="guide-step" data-step="first-task">
+                        <div class="step-marker">4</div>
+                        <div>
+                            <h2 class="h3">Run your first task</h2>
+                            <p class="p mt-1" style="color: var(--text-tertiary);">Start with something read-only. These are safe on any project:</p>
+                            <div class="code-block">
+                                <span>Inspect this project and summarize its structure, framework, and how to run/test it.</span>
+                                <button class="btn btn-outline" data-copy="Inspect this project and summarize its structure, framework, and how to run/test it." style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                            </div>
+                            <div class="code-block">
+                                <span>Find and fix all current errors/diagnostics in this project. Run relevant checks to verify.</span>
+                                <button class="btn btn-outline" data-copy="Find and fix all current errors/diagnostics in this project. Run relevant checks to verify." style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                            </div>
+                            <p class="caption" style="color: var(--text-tertiary);">
+                                Watch the activity panel on the right: every tool call is reported as it starts and as it finishes.
+                            </p>
+                            <label class="check-row"><input type="checkbox" data-check="first-task"> I ran a task and watched the tool activity.</label>
+                        </div>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="guide-step" data-step="approvals">
+                        <div class="step-marker">5</div>
+                        <div>
+                            <h2 class="h3">Learn the approval and safety flow</h2>
+                            <p class="p mt-1" style="color: var(--text-tertiary);">
+                                Every command Verteon wants to run is classified into three tiers:
+                            </p>
+                            <div class="grid grid-3 mt-3">
+                                <div class="card" style="padding: 1rem;">
+                                    <p class="fw-semibold" style="color: #4ade80;">Safe</p>
+                                    <p class="caption mt-1" style="color: var(--text-tertiary);">Read-only or standard checks. Runs without a prompt, e.g. <code>git status</code>, <code>npm test</code>.</p>
+                                </div>
+                                <div class="card" style="padding: 1rem;">
+                                    <p class="fw-semibold" style="color: #fbbf24;">Approval</p>
+                                    <p class="caption mt-1" style="color: var(--text-tertiary);">Changes something. You approve the exact command once, e.g. <code>npm install</code>, <code>git push</code>.</p>
+                                </div>
+                                <div class="card" style="padding: 1rem;">
+                                    <p class="fw-semibold" style="color: #f85149;">Blocked</p>
+                                    <p class="caption mt-1" style="color: var(--text-tertiary);">Never runs and cannot be approved, e.g. <code>rm -rf /</code>, <code>curl … | sh</code>.</p>
+                                </div>
+                            </div>
+                            <p class="caption mt-2" style="color: var(--text-tertiary);">
+                                Anything the classifier does not recognise defaults to <em>approval</em>, not to safe. Full details in <a href="docs.html" style="color: var(--primary-light);">the docs</a>.
+                            </p>
+                            <label class="check-row"><input type="checkbox" data-check="approvals"> I know which tier a command lands in before I approve it.</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card text-center" style="padding: 2.5rem;">
+                    <h2 class="h3">That is the whole setup</h2>
+                    <p class="p mt-2" style="color: var(--text-tertiary);">
+                        Your dashboard keeps your account details and this guide's progress together.
+                    </p>
+                    <a href="dashboard.html" class="btn btn-primary mt-3" id="dashboardLink">Go to my dashboard</a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-surface" style="padding: 4rem 0 2rem;">
+            <div class="container">
+                <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                    <p style="color: var(--text-tertiary); font-size: 0.875rem;">&copy; 2026 Verteon. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module">
+        import {
+            requireAuth,
+            wireChrome,
+            wireCopyButtons,
+            loadProfile,
+            markStep,
+            guideProgress,
+            GUIDE_STEPS
+        } from './assets/js/app-auth.js';
+
+        const user = await requireAuth('onboarding.html');
+        if (user) wireChrome(user);
+        wireCopyButtons();
+
+        const fill = document.getElementById('progressFill');
+        const percent = document.getElementById('progressPercent');
+        const label = document.getElementById('progressLabel');
+
+        function render() {
+            const progress = guideProgress(loadProfile());
+            fill.style.width = progress.percent + '%';
+            percent.textContent = progress.percent + '%';
+            label.textContent = `${progress.done} of ${progress.total} steps done`;
+            GUIDE_STEPS.forEach((step) => {
+                const row = document.querySelector(`.guide-step[data-step="${step.id}"]`);
+                if (row) row.classList.toggle('done', !!loadProfile().steps[step.id]);
+            });
+        }
+
+        document.querySelectorAll('[data-check]').forEach((box) => {
+            box.addEventListener('change', () => {
+                markStep(box.getAttribute('data-check'), box.checked);
+                render();
+            });
+        });
+
+        // Reflect saved progress into the checkboxes.
+        const saved = loadProfile();
+        GUIDE_STEPS.forEach((step) => {
+            const box = document.querySelector(`[data-check="${step.id}"]`);
+            if (box) box.checked = !!saved.steps[step.id];
+        });
+        render();
+    </script>
+</body>
+</html>

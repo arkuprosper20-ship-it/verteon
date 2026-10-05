@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.env*
+*.log
+
+# Build output
+*.vsix
+*.zip
+*.md
+*.txt
+*.ico
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs and caches
+logs/
+.cache/
+
+# Other
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Vercel
+.vercel
+
+# Docker
+dockerfile*

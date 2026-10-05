@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication System - Verteon</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand">
+                    Verteon <span>.</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="index.html#how-it-works" class="nav-link">How it works</a></li>
+                    <li><a href="download.html" class="nav-link">Download</a></li>
+                    <li><a href="docs.html" class="nav-link">Docs</a></li>
+                    <li><a href="signin.html" class="nav-link" id="navSignin">Sign in</a></li>
+                    <li><a href="signup.html" class="nav-link btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.875rem;">Get Started</a></li>
+                    <li style="display: none;" id="navDashboard"><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li style="display: none;" id="navLogout"><a href="index.html" class="nav-link" onclick="logout(); return false;">Sign out</a></li>
+                </ul>
+                <button class="nav-toggle" id="navToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Auth System Documentation -->
+        <section class="hero" style="min-height: auto; padding: 120px 0 60px;">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h1 class="h2">Client-Side Authentication System</h1>
+                    <p class="p" style="color: var(--text-tertiary);">Clean session management architecture for Verteon website.</p>
+                </div>
+                
+                <div class="glass-card" style="max-width: 800px; margin: 0 auto; padding: 3rem;">
+                    <h2 style="font-size: 1.5rem; color: var(--text-primary); margin-bottom: 1.5rem;">Authentication Architecture</h2>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 1rem;">User Flow</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div style="text-align: center;">
+                                <div style="width: 60px; height: 60px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <span style="color: white; font-weight: 600;">1</span>
+                                </div>
+                                <h4 style="font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Create Account</h4>
+                                <p style="color: var(--text-tertiary); font-size: 0.875rem;">User signs up via signup.html with validated form</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 60px; height: 60px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <span style="color: white; font-weight: 600;">2</span>
+                                </div>
+                                <h4 style="font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Sign In</h4>
+                                <p style="color: var(--text-tertiary); font-size: 0.875rem;">User logs in via signin.html, credentials validated</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 60px; height: 60px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <span style="color: white; font-weight: 600;">3</span>
+                                </div>
+                                <h4 style="font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Session Persistence</h4>
+                                <p style="color: var(--text-tertiary); font-size: 0.875rem;">Session stored in localStorage, persists across page reloads</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 60px; height: 60px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <span style="color: white; font-weight: 600;">4</span>
+                                </div>
+                                <h4 style="font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Protected Routes</h4>
+                                <p style="color: var(--text-tertiary); font-size: 0.875rem;">Dashboard and user pages require authentication check</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--background); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.125rem; color: var(--text-primary); margin-bottom: 1rem;">Core Functions</h3>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div style="color: var(--primary-light); font-weight: 600; margin-bottom: 0.5rem;">isAuthenticated()</div>
+                            <div style="color: var(--text-tertiary); font-size: 0.875rem;">Checks if user is logged in by looking for user token in localStorage</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div style="color: var(--primary-light); font-weight: 600; margin-bottom: 0.5rem;">login(userData)</div>
+                            <div style="color: var(--text-tertiary); font-size: 0.875rem;">Stores user session data in localStorage with expiration</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div style="color: var(--primary-light); font-weight: 600; margin-bottom: 0.5rem;">logout()</div>
+                            <div style="color: var(--text-tertiary); font-size: 0.875rem;">Removes user session from localStorage and redirects to home</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div style="color: var(--primary-light); font-weight: 600; margin-bottom: 0.5rem;">requireAuth()</div>
+                            <div style="color: var(--text-tertiary); font-size: 0.875rem;">Redirect to sign in if user is not authenticated</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div style="color: var(--primary-light); font-weight: 600; margin-bottom: 0.5rem;">protectPage(pagePath)</div>
+                            <div style="color: var(--text-tertiary); font-size: 0.875rem;">Wrapper function to protect specific pages from unauthenticated access</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--background); border-radius: var(--radius-md); padding: 1.5rem;">
+                        <h3 style="font-size: 1.125rem; color: var(--text-primary); margin-bottom: 1rem;">Implementation Example</h3>
+                        <pre style="color: var(--text-tertiary); font-size: 0.875rem; white-space: pre-wrap; overflow-x: auto;"><code>// auth.js - Client-side authentication
+function isAuthenticated() {
+    const user = localStorage.getItem('verteon_user');
+    const token = localStorage.getItem('verteon_token');
+    return !!(user && token);
+}
+
+function login(userData, token) {
+    localStorage.setItem('verteon_user', JSON.stringify(userData));
+    localStorage.setItem('verteon_token', token);
+    localStorage.setItem('verteon_login_time', Date.now().toString());
+}
+
+function logout() {
+    localStorage.removeItem('verteon_user');
+    localStorage.removeItem('verteon_token');
+    localStorage.removeItem('verteon_login_time');
+    window.location.href = 'index.html';
+}
+
+function requireAuth() {
+    if (!isAuthenticated()) {
+        window.location.href = 'signin.html';
+        return false;
+    }
+    return true;
+}
+
+function protectPage() {
+    if (!requireAuth()) {
+        return;
+    }
+    // Page content only loads if authenticated
+    loadDashboard();
+}
+
+// Usage in protected pages:
+// document.addEventListener('DOMContentLoaded', function() {
+//     if (!requireAuth()) return;
+//     // Load page content
+// });</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-surface" style="padding: 4rem 0 2rem;">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+                    <div>
+                        <div class="nav-brand" style="margin-bottom: 1rem;">Verteon <span>.</span></div>
+                        <p style="color: var(--text-tertiary); font-size: 0.875rem;">Your local AI coding agent for VS Code. Run powerful coding workflows with Ollama or connect your preferred AI provider.</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">Product</h4>
+                        <ul style="list-style: none; space-y: 0.5rem;">
+                            <li style="margin-bottom: 0.5rem;"><a href="index.html#features" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Features</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="index.html#how-it-works" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">How it works</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="download.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Download</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="docs.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">Company</h4>
+                        <ul style="list-style: none;">
+                            <li style="margin-bottom: 0.5rem;"><a href="privacy.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Privacy</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="terms.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Terms</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">Connect</h4>
+                        <ul style="list-style: none;">
+                            <li style="margin-bottom: 0.5rem;"><a href="https://github.com/local-ai-agent" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">GitHub</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="docs.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Documentation</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                    <p style="color: var(--text-tertiary); font-size: 0.875rem;">&copy; 2026 Verteon. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Navigation toggle for mobile
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        navToggle.addEventListener('click', () => {
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+        
+        // Simple auth state indicator
+        function updateAuthUI() {
+            const user = localStorage.getItem('verteon_user');
+            const isAuthenticated = !!user;
+            
+            // Update navigation links
+            const signInLink = document.getElementById('navSignin');
+            const dashboardLink = document.getElementById('navDashboard');
+            const logoutLink = document.getElementById('navLogout');
+            
+            if (isAuthenticated) {
+                if (signInLink) signInLink.style.display = 'none';
+                if (dashboardLink) dashboardLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'block';
+            } else {
+                if (signInLink) signInLink.style.display = 'block';
+                if (dashboardLink) dashboardLink.style.display = 'none';
+                if (logoutLink) logoutLink.style.display = 'none';
+            }
+        }
+        
+        // Update UI on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthUI();
+        });
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('verteon_user');
+            localStorage.removeItem('verteon_token');
+            localStorage.removeItem('verteon_login_time');
+            alert('Successfully signed out!');
+        }
+    </script>
+</body>
+</html>

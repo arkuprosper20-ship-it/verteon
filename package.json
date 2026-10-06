@@ -5,6 +5,10 @@
   "version": "0.2.0",
   "publisher": "local-ai-agent",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arkuprosper20-ship-it/verteon"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -225,6 +229,7 @@
     "pend": "^1.2.0",
     "pluralize": "^8.0.0",
     "safer-buffer": "^2.1.2",
+    "sharp": "^0.35.5",
     "text-table": "^0.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",

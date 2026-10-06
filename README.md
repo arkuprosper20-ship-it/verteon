@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="media/icon.svg" alt="Verteon logo" width="96" height="96" />
+<img src="media/icon.png" alt="Verteon logo" width="96" height="96" />
 
 # Verteon
 
@@ -399,7 +399,7 @@ Full text version: `WIREFRAME.txt`
 
 ### Full layout
 
-<img src="media/wireframes/full-layout.svg" alt="Verteon full layout wireframe: sidebar, agent workspace, activity panel" width="100%" />
+<img src="media/wireframes/full-layout.png" alt="Verteon full layout wireframe: sidebar, agent workspace, activity panel" width="100%" />
 
 ```text
 +--------------------------------------------------------------------------+
@@ -432,7 +432,7 @@ Full text version: `WIREFRAME.txt`
 
 ### Approval and the blocked tier
 
-<img src="media/wireframes/approval-required.svg" alt="Approval prompt and blocked command states" width="100%" />
+<img src="media/wireframes/approval-required.png" alt="Approval prompt and blocked command states" width="100%" />
 
 ```text
 +------------------------------------+

@@ -1,0 +1,20 @@
+[debug] [2026-10-06T04:20:27.150Z] ----------------------------------------------------------------------
+[debug] [2026-10-06T04:20:27.159Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\HP\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:list
+[debug] [2026-10-06T04:20:27.160Z] CLI Version:   15.28.2
+[debug] [2026-10-06T04:20:27.160Z] Platform:      win32
+[debug] [2026-10-06T04:20:27.161Z] Node Version:  v25.9.0
+[debug] [2026-10-06T04:20:27.161Z] Detected Agent: open_code
+[debug] [2026-10-06T04:20:27.161Z] Time:          Tue Oct 06 2026 04:20:27 GMT+0000 (Greenwich Mean Time)
+[debug] [2026-10-06T04:20:27.162Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-10-06T04:20:27.209Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-10-06T04:20:27.210Z] > authorizing via signed-in user (arkuprosper20@gmail.com)
+[debug] [2026-10-06T04:20:27.295Z] Checked if tokens are valid: false, expires at: 1791254333064
+[debug] [2026-10-06T04:20:27.296Z] Checked if tokens are valid: false, expires at: 1791254333064
+[debug] [2026-10-06T04:20:27.297Z] > refreshing access token with scopes: []
+[debug] [2026-10-06T04:20:27.306Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-10-06T04:20:27.307Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-10-06T04:20:27.952Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-10-06T04:20:27.956Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-10-06T04:20:27.990Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-10-06T04:20:28.872Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200

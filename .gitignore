@@ -1,0 +1,24 @@
+# Vercel
+.vercel
+
+# VS Code installation artifacts (not part of the project)
+07f806f999/
+appx/
+bin/
+Code.exe
+Code.VisualElementsManifest.xml
+policies/
+
+# Node / build artifacts
+node_modules/
+dist/
+out/
+*.vsix
+
+# Local env
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db

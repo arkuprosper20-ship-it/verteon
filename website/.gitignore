@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Firebase / Vercel
+.firebase/
+.vercel/
+
+# Build artifacts
+*.vsix
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local env
+.env
+.env.*

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Verteon — AI Coding Agent for VS Code</title>
+        <link rel="icon" type="image/svg+xml" href="favicon.svg">
+        <link rel="stylesheet" href="assets/css/main.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="app">
+            <!-- Navigation -->
+            <nav class="navbar">
+                <div class="nav-container">
+                    <a href="index.html" class="nav-brand">
+                        <svg width="32" height="32" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor" d="M8 1a1 1 0 0 1 1 1v1.06A5.5 5.5 0 0 1 13.94 8H15a1 1 0 1 1 0 2h-1.06A5.5 5.5 0 0 1 9 14.94V16a1 1 0 1 1-2 0v-1.06A5.5 5.5 0 0 1 2.06 10H1a1 1 0 1 1 0-2h1.06A5.5 5.5 0 0 1 7 3.06V2a1 1 0 0 1 1-1Zm0 3.5A4.5 4.5 0 1 0 8 13a4.5 4.5 0 0 0 0-8.5ZM6.75 6.5h2.5a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-.75.75h-2.5A.75.75 0 0 1 6 9.75v-2.5a.75.75 0 0 1 .75-.75Z"/>
+                        </svg>
+                        <span>Verteon<span class="accent">.</span></span>
+                    </a>
+                    <ul class="nav-links">
+                        <li><a href="#features" class="nav-link">Features</a></li>
+                        <li><a href="#how-it-works" class="nav-link">How it works</a></li>
+                        <li><a href="download.html" class="nav-link">Download</a></li>
+                        <li><a href="docs.html" class="nav-link">Docs</a></li>
+                        <li><a href="releases.html" class="nav-link">Releases</a></li>
+                        <li><a href="signin.html" class="nav-link">Sign in</a></li>
+                        <li><a href="signup.html" class="nav-link btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.875rem;">Get Started</a></li>
+                    </ul>
+                    <button class="nav-toggle" id="navToggle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Hero Section -->
+            <section class="hero" id="home">
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                            </svg>
+                            <span>Local AI Coding Agent</span>
+                        </div>
+                        <h1 class="h1">Your AI agent for VS Code.</h1>
+                        <p class="p">Run powerful coding workflows with Ollama or connect your preferred AI provider.</p>
+                        <div class="hero-features">
+                            <div class="hero-feature">
+                                <div class="hero-feature-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9.663 9.663a3 3 0 104.952 4.674 3 3 0 10-4.952-4.674z"/>
+                                        <path d="M17.5 10.5c0 2.5-2.5 4-5 4-2.5 0-5-1.5-5-4 0-2.5 2.5-4 5-4 2.5 0 5 1.5 5 4z"/>
+                                        <path d="M7 17c0 1.5 1.5 3 4 3s4-1.5 4-3-1.5-3-4-3-4 1.5-4 3z"/>
+                                    </svg>
+                                </div>
+                                <div class="hero-feature-text">
+                                    <strong>AI Coding Agent</strong> - Understand tasks and work through coding problems autonomously
+                                </div>
+                            </div>
+                            <div class="hero-feature">
+                                <div class="hero-feature-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="4 17 10 11 14 15 20 9"/>
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    </svg>
+                                </div>
+                                <div class="hero-feature-text">
+                                    <strong>Terminal</strong> - Run approved terminal commands directly from Verteon
+                                </div>
+                            </div>
+                            <div class="hero-feature">
+                                <div class="hero-feature-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                </div>
+                                <div class="hero-feature-text">
+                                    <strong>File & Editor Tools</strong> - Inspect and modify project files with AI assistance
+                                </div>
+                            </div>
+                            <div class="hero-feature">
+                                <div class="hero-feature-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </div>
+                                <div class="hero-feature-text">
+                                    <strong>Safety System</strong> - Dangerous operations blocked, risky actions require approval
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media-quick-access">
+                            <div class="media-quick-access-title">Quick Media Generation</div>
+                            <div class="media-quick-access-buttons">
+                                <button class="btn btn-primary btn-sm" onclick="showMediaPanel('image')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 16l4.586-4.586a2 2 0 0 1 2.828 0L20 20"/>
+                                        <circle cx="6" cy="6" r="3"/>
+                                        <circle cx="14" cy="10" r="3"/>
+                                    </svg>
+                                    Generate Image
+                                </button>
+                                <button class="btn btn-secondary btn-sm" onclick="showMediaPanel('video')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="23 7 23 17 17 12 23 7"/>
+                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                    </svg>
+                                    Generate Video
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Media Generation Panel -->
+            <div id="mediaGenerationPanel" class="panel media-panel">
+                <div class="container">
+                    <button class="close-media-panel" onclick="closeMediaPanel()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                    <div id="imageGenerationPanel"></div>
+                    <div id="videoGenerationPanel" class="d-none"></div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <span class="caption">Features</span>
+                    <h2 class="h2">Powerful coding capabilities</h2>
+                </div>
+                <div class="features-grid">
+                    <!-- AI Coding Agent -->
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9.663 9.663a3 3 0 104.952 4.674 3 3 0 10-4.952-4.674z"/>
+                                <path d="M17.5 10.5c0 2.5-2.5 4-5 4-2.5 0-5-1.5-5-4 0-2.5 2.5-4 5-4 2.5 0 5 1.5 5 4z"/>
+                                <path d="M7 17c0 1.5 1.5 3 4 3s4-1.5 4-3-1.5-3-4-3-4 1.5-4 3z"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">AI Coding Agent</h3>
+                        <p class="feature-desc">Understand tasks and work through coding problems autonomously.</p>
+                    </div>
+                    
+                    <!-- Terminal -->
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 17 10 11 14 15 20 9"/>
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Terminal</h3>
+                        <p class="feature-desc">Run approved terminal commands directly from Verteon.</p>
+                    </div>
+                    
+                    <!-- File & Editor Tools -->
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 9-11h-9l4-8z"/>
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">File & Editor Tools</h3>
+                        <p class="feature-desc">Inspect and modify project files with AI assistance.</p>
+                    </div>
+                    
+                    <!-- Safety System -->
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Safety System</h3>
+                        <p class="feature-desc">Dangerous operations are blocked and risky actions require approval.</p>
+                    </div>
+                    
+                    <!-- Multi-Provider -->
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Multi-Provider</h3>
+                        <p class="feature-desc">Use Ollama locally or supported cloud AI providers.</p>
+                    </div>
+                    
+                    <!-- Project Context -->
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Project Context</h3>
+                        <p class="feature-desc">Maintain useful project context without sending the entire repository.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Preview Section -->
+        <section class="preview" id="how-it-works">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <span class="caption">Live Demo</span>
+                    <h2 class="h2">Interactive product preview</h2>
+                    <p class="p" style="max-width: 40rem; margin: 0.5rem auto 0;">
+                        This is a frontend simulation of the Verteon sidebar. It demonstrates the interface and interaction patterns — no AI backend, commands, or file changes run in your browser.
+                    </p>
+                </div>
+
+                <div class="preview-container" id="appPreview">
+                    <div class="preview-header">
+                        <div class="preview-dots">
+                            <div class="preview-dot active"></div>
+                            <div class="preview-dot"></div>
+                            <div class="preview-dot"></div>
+                        </div>
+                        <span class="preview-title">ai-agent-sidebar.webview <span class="simulated-badge">simulated</span></span>
+                        <button class="preview-reset" id="previewReset" aria-label="Reset preview">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            Reset
+                        </button>
+                    </div>
+
+                    <div class="preview-content">
+                        <!-- Sidebar -->
+                        <aside class="preview-sidebar" role="navigation" aria-label="Preview panels">
+                            <div class="sidebar-section">
+                                <div class="provider-block">
+                                    <div class="provider-status" id="providerStatus">
+                                        <span class="preview-status active" id="providerDot"></span>
+                                        <span class="provider-status-text" id="providerStatusText">Connected to Ollama</span>
+                                    </div>
+                                    <div class="provider-selectors">
+                                        <div class="selector" id="providerSelector">
+                                            <button class="selector-button" id="providerButton" aria-haspopup="listbox" aria-expanded="false" aria-label="Select AI provider">
+                                                <span class="selector-label" id="providerLabel">ollama</span>
+                                                <svg class="selector-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                </svg>
+                                            </button>
+                                            <ul class="selector-dropdown" id="providerDropdown" role="listbox" aria-label="AI providers" hidden></ul>
+                                        </div>
+                                        <div class="selector" id="modelSelector">
+                                            <button class="selector-button" id="modelButton" aria-haspopup="listbox" aria-expanded="false" aria-label="Select model">
+                                                <span class="selector-label" id="modelLabel">qwen2.5-coder:7b</span>
+                                                <svg class="selector-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                                </svg>
+                                            </button>
+                                            <ul class="selector-dropdown" id="modelDropdown" role="listbox" aria-label="Models" hidden></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <nav class="sidebar-tabs" role="tablist" aria-label="Sidebar panels">
+                                <button class="sidebar-tab active" role="tab" aria-selected="true" aria-controls="panel-agent" data-panel="agent" id="tab-agent">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9.663 9.663a3 3 0 104.952 4.674 3 3 0 10-4.952-4.674z"/>
+                                        <path d="M17.5 10.5c0 2.5-2.5 4-5 4-2.5 0-5-1.5-5-4 0-2.5 2.5-4 5-4 2.5 0 5 1.5 5 4z"/>
+                                    </svg>
+                                    Agent
+                                </button>
+                                <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="panel-files" data-panel="files" id="tab-files">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                    Files
+                                </button>
+                                <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="panel-terminal" data-panel="terminal" id="tab-terminal">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="4 17 10 11 14 15 20 9"/>
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                    </svg>
+                                    Terminal
+                                </button>
+                                <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="panel-git" data-panel="git" id="tab-git">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/>
+                                        <path d="M13 6h3a2 2 0 0 1 2 2v7"/>
+                                        <line x1="6" y1="9" x2="6" y2="21"/>
+                                    </svg>
+                                    Git
+                                </button>
+                                <button class="sidebar-tab" role="tab" aria-selected="false" aria-controls="panel-settings" data-panel="settings" id="tab-settings">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="3"/>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                    </svg>
+                                    Settings
+                                </button>
+                            </nav>
+
+                            <div class="sidebar-panels">
+                                <div class="sidebar-panel active" role="tabpanel" id="panel-agent" aria-labelledby="tab-agent">
+                                    <div class="panel-section">
+                                        <div class="panel-heading">Context files</div>
+                                        <ul class="context-list" id="contextFiles">
+                                            <li class="context-item"><span class="context-badge">M</span>package.json</li>
+                                            <li class="context-item"><span class="context-badge">R</span>src/agent/agent.ts</li>
+                                            <li class="context-item"><span class="context-badge">R</span>src/extension.ts</li>
+                                        </ul>
+                                    </div>
+                                    <div class="panel-section">
+                                        <button class="btn btn-outline btn-block" id="newTaskBtn">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                            New Task
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar-panel" role="tabpanel" id="panel-files" aria-labelledby="tab-files" hidden>
+                                    <div class="panel-section">
+                                        <div class="panel-heading">Project files</div>
+                                        <ul class="file-tree" id="fileTree">
+                                            <li class="file-item" data-file="package.json"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>package.json</li>
+                                            <li class="file-item" data-file="src/agent/agent.ts"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>src/agent/agent.ts</li>
+                                            <li class="file-item" data-file="src/extension.ts"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>src/extension.ts</li>
+                                            <li class="file-item" data-file="media/main.css"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>media/main.css</li>
+                                            <li class="file-item" data-file="README.md"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>README.md</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar-panel" role="tabpanel" id="panel-terminal" aria-labelledby="tab-terminal" hidden>
+                                    <div class="terminal-panel" id="terminalPanel" aria-live="polite">
+                                        <div class="terminal-line terminal-line-prompt"><span class="terminal-prompt">PS D:\project&gt;</span> <span class="terminal-cmd">npm list --depth=0</span></div>
+                                        <div class="terminal-line terminal-line-output">project@0.2.0 D:\project</div>
+                                        <div class="terminal-line terminal-line-output">├── local-ai-agent@0.2.0</div>
+                                        <div class="terminal-line terminal-line-output">├── typescript@5.5.4</div>
+                                        <div class="terminal-line terminal-line-output">└── vscode@1.85.0</div>
+                                    </div>
+                                    <div class="terminal-status" id="terminalStatus">
+                                        <span class="preview-status" id="terminalDot"></span>
+                                        <span id="terminalStatusText">Idle</span>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar-panel" role="tabpanel" id="panel-git" aria-labelledby="tab-git" hidden>
+                                    <div class="panel-section">
+                                        <div class="panel-heading">Changes</div>
+                                        <ul class="git-list" id="gitList">
+                                            <li class="git-item"><span class="git-badge git-modified">M</span>src/agent/agent.ts</li>
+                                            <li class="git-item"><span class="git-badge git-untracked">U</span>media/main.css</li>
+                                        </ul>
+                                        <p class="panel-note">Git operations are simulated in this preview.</p>
+                                    </div>
+                                </div>
+
+                                <div class="sidebar-panel" role="tabpanel" id="panel-settings" aria-labelledby="tab-settings" hidden>
+                                    <div class="panel-section">
+                                        <div class="panel-heading">Settings</div>
+                                        <div class="setting-row">
+                                            <label class="setting-label" for="settingAutoApprove">Auto-approve safe reads</label>
+                                            <button class="toggle" id="settingAutoApprove" role="switch" aria-checked="true" aria-label="Auto-approve safe reads"><span class="toggle-thumb"></span></button>
+                                        </div>
+                                        <div class="setting-row">
+                                            <label class="setting-label" for="settingTerminal">Terminal commands</label>
+                                            <button class="toggle" id="settingTerminal" role="switch" aria-checked="true" aria-label="Terminal commands"><span class="toggle-thumb"></span></button>
+                                        </div>
+                                        <div class="setting-row">
+                                            <label class="setting-label" for="settingSounds">Interface sounds</label>
+                                            <button class="toggle" id="settingSounds" role="switch" aria-checked="false" aria-label="Interface sounds"><span class="toggle-thumb"></span></button>
+                                        </div>
+                                        <div class="setting-row">
+                                            <label class="setting-label" for="settingAnimations">Animations</label>
+                                            <button class="toggle" id="settingAnimations" role="switch" aria-checked="true" aria-label="Animations"><span class="toggle-thumb"></span></button>
+                                        </div>
+                                        <p class="panel-note">Settings persist in this browser only.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <!-- Main chat area -->
+                        <main class="preview-main">
+                            <div class="chat" id="chat">
+                                <div class="messages" id="messages" aria-live="polite" aria-label="Conversation">
+                                    <div class="message message-assistant">
+                                        <div class="message-avatar" aria-hidden="true">
+                                            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a1 1 0 0 1 1 1v1.06A5.5 5.5 0 0 1 13.94 8H15a1 1 0 1 1 0 2h-1.06A5.5 5.5 0 0 1 9 14.94V16a1 1 0 1 1-2 0v-1.06A5.5 5.5 0 0 1 2.06 10H1a1 1 0 1 1 0-2h1.06A5.5 5.5 0 0 1 7 3.06V2a1 1 0 0 1 1-1Zm0 3.5A4.5 4.5 0 1 0 8 13a4.5 4.5 0 0 0 0-8.5ZM6.75 6.5h2.5a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-.75.75h-2.5A.75.75 0 0 1 6 9.75v-2.5a.75.75 0 0 1 .75-.75Z"/></svg>
+                                        </div>
+                                        <div class="message-content">
+                                            <div class="message-meta">Verteon Agent</div>
+                                            <div class="message-text">Hello! I'm your AI coding assistant. I can help you analyze this project, edit files, run commands, and fix problems. How can I assist you today?</div>
+                                        </div>
+                                    </div>
+                                    <div class="message message-user">
+                                        <div class="message-content">
+                                            <div class="message-meta">You</div>
+                                            <div class="message-text">Please inspect the package.json and show me the dependencies.</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="agent-status-bar" id="agentStatusBar" role="status">
+                                    <span class="agent-status-indicator" id="agentStatusIndicator"></span>
+                                    <span class="agent-status-text" id="agentStatusText">Idle</span>
+                                    <button class="agent-cancel" id="cancelBtn" hidden>Cancel</button>
+                                </div>
+
+                                <form class="composer" id="composer">
+                                    <textarea class="composer-input" id="composerInput" rows="1" placeholder="Ask Verteon to edit, explain, or run something..." aria-label="Message the agent"></textarea>
+                                    <div class="composer-actions">
+                                        <kbd class="composer-hint">Enter to send · Shift+Enter for newline</kbd>
+                                        <button type="submit" class="btn btn-primary composer-send" id="sendBtn" aria-label="Send message">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                            </svg>
+                                            Send
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Activity panel -->
+                            <aside class="preview-activity-panel" aria-label="Agent activity">
+                                <div class="activity-heading">Activity</div>
+                                <div class="activity-list" id="activityList">
+                                    <div class="activity-card" data-expandable>
+                                        <button class="activity-card-header" aria-expanded="false">
+                                            <span class="activity-icon activity-icon-tool">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                            </span>
+                                            <span class="activity-title">Read file</span>
+                                            <span class="activity-target">package.json</span>
+                                            <span class="activity-duration">0.4s</span>
+                                            <svg class="activity-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </button>
+                                        <div class="activity-details" hidden>
+                                            <pre class="activity-output">Read 42 lines from package.json
+name: local-ai-agent
+version: 0.2.0</pre>
+                                        </div>
+                                    </div>
+
+                                    <div class="activity-card" data-expandable>
+                                        <button class="activity-card-header" aria-expanded="false">
+                                            <span class="activity-icon activity-icon-terminal">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 14 15 20 9"/><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+                                            </span>
+                                            <span class="activity-title">Terminal command</span>
+                                            <span class="activity-target">npm list --depth=0</span>
+                                            <span class="activity-duration">1.2s</span>
+                                            <svg class="activity-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                        </button>
+                                        <div class="activity-details" hidden>
+                                            <pre class="activity-output">project@0.2.0 D:\project
+├── local-ai-agent@0.2.0
+├── typescript@5.5.4
+└── vscode@1.85.0</pre>
+                                        </div>
+                                    </div>
+
+                                    <div class="activity-card activity-card-approval" id="approvalCard">
+                                        <div class="approval-header">
+                                            <span class="activity-icon activity-icon-approval">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="3"/></svg>
+                                            </span>
+                                            <span class="approval-title">Approval required</span>
+                                        </div>
+                                        <div class="approval-body" id="approvalBody">
+                                            <div class="approval-action">Edit file: <strong>README.md</strong></div>
+                                            <div class="approval-desc">Add installation instructions for new users.</div>
+                                            <div class="approval-actions">
+                                                <button class="btn btn-primary btn-sm" id="approveBtn">Allow</button>
+                                                <button class="btn btn-outline btn-sm" id="denyBtn">Deny</button>
+                                            </div>
+                                        </div>
+                                        <div class="approval-result" id="approvalResult" hidden></div>
+                                    </div>
+                                </div>
+                            </aside>
+                        </main>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-surface" style="padding: 4rem 0 2rem; margin-top: auto;">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+                    <div>
+                        <div class="nav-brand" style="margin-bottom: 1rem;">Verteon <span>.</span></div>
+                        <p style="color: var(--text-tertiary); font-size: 0.875rem;">Your local AI coding agent for VS Code. Run powerful coding workflows with Ollama or connect your preferred AI provider.</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">Product</h4>
+                            <ul style="list-style: none;">
+                            <li style="margin-bottom: 0.5rem;"><a href="#features" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Features</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="#how-it-works" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">How it works</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="download.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Download</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="docs.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">Company</h4>
+                        <ul style="list-style: none;">
+                            <li style="margin-bottom: 0.5rem;"><a href="privacy.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Privacy</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="terms.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Terms</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="contact.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">Connect</h4>
+                        <ul style="list-style: none;">
+                            <li style="margin-bottom: 0.5rem;"><a href="https://github.com/arkuprosper20-ship-it/verteon" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">GitHub</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="docs.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Documentation</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                    <p style="color: var(--text-tertiary); font-size: 0.875rem;">&copy; 2026 Verteon. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Media panel functionality
+        function showMediaPanel(panelType) {
+            const mediaPanel = document.getElementById('mediaGenerationPanel');
+            const imagePanel = document.getElementById('imageGenerationPanel');
+            const videoPanel = document.getElementById('videoGenerationPanel');
+            
+            if (!mediaPanel) return;
+            
+            // Hide both panels
+            imagePanel?.classList.add('d-none');
+            videoPanel?.classList.add('d-none');
+            
+            // Show the requested panel
+            if (panelType === 'image') {
+                imagePanel?.classList.remove('d-none');
+                videoPanel?.classList.add('d-none');
+            } else if (panelType === 'video') {
+                imagePanel?.classList.add('d-none');
+                videoPanel?.classList.remove('d-none');
+            }
+            
+            // Add active class to media panel
+            mediaPanel.classList.add('active');
+        }
+        
+        function closeMediaPanel() {
+            const mediaPanel = document.getElementById('mediaGenerationPanel');
+            if (mediaPanel) {
+                mediaPanel.classList.remove('active');
+            }
+        }
+        
+        // Load media UI scripts
+        const script = document.createElement('script');
+        script.src = 'assets/js/media-ui.js';
+        script.defer = true;
+        document.head.appendChild(script);
+        
+        // Load image generation
+        const imageScript = document.createElement('script');
+        imageScript.src = 'assets/js/image-generation.js';
+        imageScript.defer = true;
+        document.head.appendChild(imageScript);
+        
+        // Load video generation
+        const videoScript = document.createElement('script');
+        videoScript.src = 'assets/js/video-generation.js';
+        videoScript.defer = true;
+        document.head.appendChild(videoScript);
+    </script>
+</body>
+</html>

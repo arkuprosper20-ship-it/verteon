@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install Guide - Verteon</title>
+    <meta name="description" content="Install the Verteon extension for VS Code and verify the install.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .code-block {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-sm);
+            background: #0b1120;
+            border: 1px solid var(--border);
+            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+        .step-block { padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
+        .step-block:last-of-type { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand">Verteon <span>.</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="download.html" class="nav-link">Download</a></li>
+                    <li><a href="docs.html" class="nav-link">Docs</a></li>
+                    <li><a href="signin.html" class="nav-link">Sign in</a></li>
+                    <li><a href="signup.html" class="nav-link btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.875rem;">Get Started</a></li>
+                </ul>
+                <button class="nav-toggle" id="navToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <section style="padding: 120px 0 60px;">
+            <div class="container" style="max-width: 820px;">
+                <p class="caption" style="letter-spacing: 1px; text-transform: uppercase;">Install</p>
+                <h1 class="h2 mt-1">Install Verteon 0.2.0</h1>
+                <p class="p mt-2" style="color: var(--text-tertiary);">
+                    Three steps: get the <code>.vsix</code>, install it with one command, confirm it is running.
+                </p>
+
+                <div class="glass-card mt-4" style="padding: 1.5rem 2.5rem 2rem;">
+                    <div class="step-block">
+                        <h2 class="h3">1. Get the VSIX file</h2>
+                        <p class="p mt-1" style="color: var(--text-tertiary);">
+                            The extension ships as a packaged <code>local-ai-agent-0.2.0.vsix</code>. Download it directly:
+                        </p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0;">
+                            <a href="local-ai-agent-0.2.0.vsix" class="btn btn-primary" download="local-ai-agent-0.2.0.vsix">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                Download VSIX (0.16 MB)
+                            </a>
+                        </div>
+                        <p class="p mt-2" style="color: var(--text-tertiary);">
+                            Or build it yourself from the public source:
+                        </p>
+                        <div class="code-block mt-2">
+                            <span>git clone https://github.com/arkuprosper20-ship-it/verteon.git</span>
+                            <button class="btn btn-outline" data-copy="git clone https://github.com/arkuprosper20-ship-it/verteon.git" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                        </div>
+                        <div class="code-block">
+                            <span>npm install</span>
+                            <button class="btn btn-outline" data-copy="npm install" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                        </div>
+                        <div class="code-block">
+                            <span>npm run package</span>
+                            <button class="btn btn-outline" data-copy="npm run package" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                        </div>
+                        <p class="caption mt-2" style="color: var(--text-tertiary);">
+                            That produces <code>local-ai-agent-0.2.0.vsix</code> in the project root. Run the next command from
+                            that same folder, or pass the full path to the file.
+                        </p>
+                    </div>
+
+                    <div class="step-block">
+                        <h2 class="h3">2. Install it</h2>
+                        <p class="p mt-1" style="color: var(--text-tertiary);">From a terminal, in the folder containing the VSIX:</p>
+                        <div class="code-block mt-2" id="installBlock">
+                            <span>code --install-extension local-ai-agent-0.2.0.vsix</span>
+                            <button class="btn btn-outline" data-copy="code --install-extension local-ai-agent-0.2.0.vsix" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                        </div>
+                        <div class="grid grid-2 mt-3">
+                            <div class="card" style="padding: 1rem;">
+                                <p class="fw-semibold" style="font-size: 0.9rem;">Windows</p>
+                                <p class="caption" style="color: var(--text-tertiary);">Run from PowerShell. If <code>code</code> is not recognised, VS Code adds it to PATH on first install; otherwise use the full path to <code>Code.exe</code>.</p>
+                            </div>
+                            <div class="card" style="padding: 1rem;">
+                                <p class="fw-semibold" style="font-size: 0.9rem;">macOS / Linux</p>
+                                <p class="caption" style="color: var(--text-tertiary);">The binary is <code>code</code>, <code>codium</code> for VSCodium, or <code>code-insiders</code>. The <code>Shell Command: Install 'code' command in PATH</code> command from the Command Palette sets this up.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-block">
+                        <h2 class="h3">3. Confirm it is running</h2>
+                        <p class="p mt-1" style="color: var(--text-tertiary);">
+                            Reload the window (<code>Developer: Reload Window</code>). The AI Agent icon appears in the
+                            Activity Bar. On first launch Verteon probes your provider: with Ollama running you get a
+                            success message, and without it a warning with shortcuts to Settings and the Ollama download.
+                        </p>
+                        <p class="caption mt-2" style="color: var(--text-tertiary);">
+                            You can also check from the CLI:
+                        </p>
+                        <div class="code-block mt-2">
+                            <span>code --list-extensions | grep local-ai-agent</span>
+                            <button class="btn btn-outline" data-copy="code --list-extensions | grep local-ai-agent" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Copy</button>
+                        </div>
+                        <p class="caption mt-2" style="color: var(--text-tertiary);">On PowerShell, use <code>Select-String</code> in place of <code>grep</code>.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card text-center mt-4" style="padding: 2.5rem;">
+                    <h2 class="h3">Installed?</h2>
+                    <p class="p mt-2" style="color: var(--text-tertiary);">
+                        Continue with the setup guide to connect a model and run your first task.
+                    </p>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem;">
+                        <a href="onboarding.html" class="btn btn-primary" style="text-decoration: none;">Open the setup guide</a>
+                        <a href="docs.html" class="btn btn-outline" style="text-decoration: none;">Read the docs</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-surface" style="padding: 4rem 0 2rem;">
+            <div class="container">
+                <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                    <p style="color: var(--text-tertiary); font-size: 0.875rem;">&copy; 2026 Verteon. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.querySelector('.nav-links');
+        navToggle.addEventListener('click', () => {
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        document.querySelectorAll('[data-copy]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const original = btn.textContent;
+                try {
+                    await navigator.clipboard.writeText(btn.getAttribute('data-copy'));
+                    btn.textContent = 'Copied';
+                } catch {
+                    btn.textContent = 'Copy failed';
+                }
+                setTimeout(() => { btn.textContent = original; }, 1400);
+            });
+        });
+    </script>
+</body>
+</html>

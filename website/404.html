@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not found | Verteon</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        body { min-height: 100vh; display: grid; place-items: center; }
+        .not-found {
+            width: min(680px, calc(100% - 2rem));
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            border-radius: 24px;
+            background: rgba(15, 23, 42, 0.78);
+            border: 1px solid var(--border);
+            box-shadow: 0 30px 70px rgba(15, 23, 42, 0.4);
+            text-align: center;
+        }
+        .error-code {
+            font-size: clamp(3rem, 10vw, 6rem);
+            line-height: 1;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.75rem;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <main class="not-found">
+        <div style="margin-bottom: 1rem; width: 84px; height: 84px; margin-inline: auto; border-radius: 50%; background: rgba(99,102,241,0.12); border: 1px solid var(--border); display: grid; place-items: center;">
+            <img src="favicon.svg" alt="Verteon logo" style="width: 48px; height: 48px;">
+        </div>
+        <div class="error-code">404</div>
+        <h1 class="h2" style="margin-bottom: 0.75rem;">This page could not be found.</h1>
+        <p class="p" style="color: var(--text-tertiary); margin: 0;">The URL may be outdated or the page was moved. Let’s get you back to a working Verteon page.</p>
+        <div class="actions">
+            <a href="index.html" class="btn btn-primary">Go home</a>
+            <a href="download.html" class="btn btn-outline">Download</a>
+        </div>
+    </main>
+</body>
+</html>

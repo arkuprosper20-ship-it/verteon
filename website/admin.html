@@ -4,10 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Verteon</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-logo-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 2.5rem 1rem;
+            margin: 0 auto 2.5rem;
+            max-width: 560px;
+            border-radius: var(--radius-lg);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+        }
+        .admin-logo {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4.5rem;
+            color: #fff;
+            background: var(--gradient-primary);
+            border-radius: 32px;
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.45);
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+        }
+        .admin-logo:hover { transform: scale(1.06) rotate(-3deg); }
+        .admin-logo:active { transform: scale(0.94); }
+        .admin-logo.spin { animation: logoSpin 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes logoSpin {
+            from { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.15); }
+            to { transform: rotate(360deg) scale(1); }
+        }
+        .admin-logo-hint {
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .admin-stat-value { font-size: 1.75rem; font-weight: 700; }
+        .admin-stat-loading { color: var(--text-tertiary); font-size: 0.9rem; }
+        .admin-stat-error { color: #fca5a5; font-size: 0.85rem; }
+        .admin-identity {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+        .admin-identity-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .admin-identity-name { font-weight: 600; color: var(--text-primary); }
+        .admin-identity-email { color: var(--text-tertiary); font-size: 0.85rem; word-break: break-all; }
+        .admin-identity-uid {
+            font-family: ui-monospace, monospace;
+            font-size: 0.75rem;
+            color: var(--primary-light);
+            word-break: break-all;
+        }
+        .admin-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+        }
+        .admin-status-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 1.1rem;
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+        .admin-status-label { font-weight: 600; color: var(--text-primary); font-size: 0.9rem; }
+        .admin-status-value { font-size: 0.8rem; color: var(--text-tertiary); margin-left: auto; text-align: right; }
+        .admin-status-value.ok { color: #4ade80; }
+        .admin-status-value.err { color: #fca5a5; }
+        .admin-empty {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-md);
+        }
+    </style>
 </head>
 <body>
     <div class="app">
@@ -22,8 +130,10 @@
                     <li><a href="index.html#how-it-works" class="nav-link">How it works</a></li>
                     <li><a href="download.html" class="nav-link">Download</a></li>
                     <li><a href="docs.html" class="nav-link">Docs</a></li>
+                    <li><span class="nav-link" id="navUser" style="color: var(--text-tertiary);"></span></li>
+                    <li><button class="nav-link btn btn-outline" id="signOutBtn" style="padding: 0.4rem 1rem; font-size: 0.8rem;" hidden>Sign out</button></li>
                 </ul>
-                <button class="nav-toggle" id="navToggle">
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -37,158 +147,100 @@
         <section class="hero" style="min-height: auto; padding: 120px 0 60px;">
             <div class="container">
                 <div class="text-center mb-5">
-                    <h1 class="h2">Admin Dashboard</h1>
-                    <p class="p" style="color: var(--text-tertiary);">Manage Verteon website and user data.</p>
+                    <p class="caption" style="letter-spacing: 1px; text-transform: uppercase;">Restricted area</p>
+                    <h1 class="h2 mt-1">Admin Dashboard</h1>
+                    <p class="p mt-2" id="adminGreeting" style="color: var(--text-tertiary);">Loading your session…</p>
                 </div>
-                
+
+                <!-- Logo the admin can play with -->
+                <div class="admin-logo-stage">
+                    <div class="admin-logo" id="adminLogo" title="Click me">&#9670;</div>
+                    <div class="admin-logo-hint">This is the Verteon mark. Click it — it spins.</div>
+                </div>
+
+                <!-- Signed-in admin identity (real data from Firebase Auth) -->
+                <div class="admin-identity" id="adminIdentity" style="margin-bottom: 2rem;">
+                    <div class="admin-identity-avatar" id="adminAvatar">?</div>
+                    <div style="min-width: 0;">
+                        <div class="admin-identity-name" id="adminName">—</div>
+                        <div class="admin-identity-email" id="adminEmail">—</div>
+                        <div class="admin-identity-uid" id="adminUid">—</div>
+                    </div>
+                    <span class="admin-badge" style="margin-left: auto;">Admin</span>
+                </div>
+
+                <!-- Live stats fetched from Firebase -->
                 <div class="grid grid-3">
-                    <!-- User Statistics Card -->
                     <div class="card">
-                        <h3 class="card-title">User Statistics</h3>
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                                    <path d="M17 20h2V4H5v16h2M17 14H9M17 10H9"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-primary); font-weight: 600;">Total Users</div>
-                                <div style="color: var(--primary-light); font-size: 1.5rem; font-weight: 600;">1,247</div>
-                            </div>
-                        </div>
-                        <div style="color: var(--text-tertiary); font-size: 0.875rem;">Registered users on the platform</div>
+                        <h3 class="card-title">Signed-in session</h3>
+                        <div class="admin-stat-value" id="statSession" style="color: var(--primary-light);">—</div>
+                        <div style="color: var(--text-tertiary); font-size: 0.875rem;">Current Firebase Auth session</div>
                     </div>
-                    
-                    <!-- Download Statistics -->
                     <div class="card">
-                        <h3 class="card-title">Downloads</h3>
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="width: 40px; height: 40px; background: var(--gradient-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                    <line x1="16" y1="13" x2="8" y2="13"/>
-                                    <line x1="16" y1="17" x2="8" y2="17"/>
-                                    <polyline points="10 9 9 9 8 9"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-primary); font-weight: 600;">Total Downloads</div>
-                                <div style="color: var(--secondary-light); font-size: 1.5rem; font-weight: 600;">3,892</div>
-                            </div>
-                        </div>
-                        <div style="color: var(--text-tertiary); font-size: 0.875rem;">VSIX downloads by users</div>
+                        <h3 class="card-title">Provider</h3>
+                        <div class="admin-stat-value" id="statProvider" style="color: var(--secondary-light);">—</div>
+                        <div style="color: var(--text-tertiary); font-size: 0.875rem;">Sign-in provider for this account</div>
                     </div>
-                    
-                    <!-- Active Sessions -->
                     <div class="card">
-                        <h3 class="card-title">Active Sessions</h3>
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <polyline points="12 6 12 12 16 14"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div style="color: var(--text-primary); font-weight: 600;">Active Now</div>
-                                <div style="color: #3fb950; font-size: 1.5rem; font-weight: 600;">487</div>
-                            </div>
-                        </div>
-                        <div style="color: var(--text-tertiary); font-size: 0.875rem;">Users currently active on the site</div>
+                        <h3 class="card-title">Email verified</h3>
+                        <div class="admin-stat-value" id="statVerified">—</div>
+                        <div style="color: var(--text-tertiary); font-size: 0.875rem;">Account verification state</div>
                     </div>
                 </div>
-                
-                <!-- User Management Section -->
-                <div class="card" style="margin-top: 2rem;">
-                    <h3 class="card-title">User Management</h3>
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
-                            <thead>
-                                <tr style="border-bottom: 1px solid var(--border);">
-                                    <th style="text-align: left; padding: 0.75rem; color: var(--text-secondary); font-weight: 600;">User ID</th>
-                                    <th style="text-align: left; padding: 0.75rem; color: var(--text-secondary); font-weight: 600;">Email</th>
-                                    <th style="text-align: left; padding: 0.75rem; color: var(--text-secondary); font-weight: 600;">Role</th>
-                                    <th style="text-align: left; padding: 0.75rem; color: var(--text-secondary); font-weight: 600;">Last Active</th>
-                                    <th style="text-align: left; padding: 0.75rem; color: var(--text-secondary); font-weight: 600;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style="border-bottom: 1px solid var(--border); hover: { background: var(--surface); }">
-                                    <td style="padding: 0.75rem; color: var(--primary-light);">user_001</td>
-                                    <td style="padding: 0.75rem; color: var(--text-secondary);">john.doe@example.com</td>
-                                    <td style="padding: 0.75rem;">
-                                        <span style="background: rgba(99, 102, 241, 0.1); color: var(--primary-light); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">Admin</span>
-                                    </td>
-                                    <td style="padding: 0.75rem; color: var(--text-tertiary);">2 hours ago</td>
-                                    <td style="padding: 0.75rem;">
-                                        <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">View</button>
-                                    </td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid var(--border); hover: { background: var(--surface); }">
-                                    <td style="padding: 0.75rem; color: var(--primary-light);">user_002</td>
-                                    <td style="padding: 0.75rem; color: var(--text-secondary);">sarah.smith@example.com</td>
-                                    <td style="padding: 0.75rem;">
-                                        <span style="background: rgba(168, 85, 247, 0.1); color: var(--accent); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">User</span>
-                                    </td>
-                                    <td style="padding: 0.75rem; color: var(--text-tertiary);">5 hours ago</td>
-                                    <td style="padding: 0.75rem;">
-                                        <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">View</button>
-                                    </td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid var(--border); hover: { background: var(--surface); }">
-                                    <td style="padding: 0.75rem; color: var(--primary-light);">user_003</td>
-                                    <td style="padding: 0.75rem; color: var(--text-secondary);">mike johnson@example.com</td>
-                                    <td style="padding: 0.75rem;">
-                                        <span style="background: rgba(6, 182, 212, 0.1); color: var(--secondary-light); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">User</span>
-                                    </td>
-                                    <td style="padding: 0.75rem; color: var(--text-tertiary);">1 day ago</td>
-                                    <td style="padding: 0.75rem;">
-                                        <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">View</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- System Status Section -->
+
+                <!-- Real system checks -->
                 <div style="margin-top: 2rem;">
-                    <h3 style="font-size: 1.125rem; color: var(--text-primary); margin-bottom: 1rem;">System Status</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
-                        <div style="padding: 1.5rem; background: var(--background); border-radius: var(--radius-md); border: 1px solid var(--border);">
-                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                                <span class="status-dot status-ok"></span>
-                                <span style="color: var(--text-primary); font-weight: 600;">Server Status</span>
-                            </div>
-                            <div style="color: #3fb950; font-size: 0.875rem;">✅ All systems operational</div>
+                    <h3 style="font-size: 1.125rem; color: var(--text-primary); margin-bottom: 1rem;">System checks</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+                        <div class="admin-status-row">
+                            <span class="status-dot status-ok" id="dotAuth"></span>
+                            <span class="admin-status-label">Authentication</span>
+                            <span class="admin-status-value" id="valAuth">checking…</span>
                         </div>
-                        <div style="padding: 1.5rem; background: var(--background); border-radius: var(--radius-md); border: 1px solid var(--border);">
-                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                                <span class="status-dot status-ok"></span>
-                                <span style="color: var(--text-primary); font-weight: 600;">Database</span>
-                            </div>
-                            <div style="color: #3fb950; font-size: 0.875rem;">✅ Connected and synced</div>
+                        <div class="admin-status-row">
+                            <span class="status-dot status-ok" id="dotHosting"></span>
+                            <span class="admin-status-label">Firebase Hosting</span>
+                            <span class="admin-status-value" id="valHosting">checking…</span>
                         </div>
-                        <div style="padding: 1.5rem; background: var(--background); border-radius: var(--radius-md); border: 1px solid var(--border);">
-                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                                <span class="status-dot status-ok"></span>
-                                <span style="color: var(--text-primary); font-weight: 600;">Authentication</span>
-                            </div>
-                            <div style="color: #3fb950; font-size: 0.875rem;">✅ Firebase configured and working</div>
+                        <div class="admin-status-row">
+                            <span class="status-dot status-ok" id="dotConfig"></span>
+                            <span class="admin-status-label">Firebase config</span>
+                            <span class="admin-status-value" id="valConfig">checking…</span>
                         </div>
-                        <div style="padding: 1.5rem; background: var(--background); border-radius: var(--radius-md); border: 1px solid var(--border);">
-                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                                <span class="status-dot status-ok"></span>
-                                <span style="color: var(--text-primary); font-weight: 600;">API Services</span>
-                            </div>
-                            <div style="color: #3fb950; font-size: 0.875rem;">✅ All services operational</div>
+                        <div class="admin-status-row">
+                            <span class="status-dot status-ok" id="dotAdmin"></span>
+                            <span class="admin-status-label">Admin gate</span>
+                            <span class="admin-status-value" id="valAdmin">checking…</span>
                         </div>
-                        <div style="text-align: center; margin-top: 1.5rem;">
-                            <button onclick="window.runAuthenticationTests()" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
-                                🔍 Run Authentication Tests
-                            </button>
-                        </div>
+                    </div>
+                </div>
+
+                <!-- Account metadata (real, from the Firebase user object) -->
+                <div class="card" style="margin-top: 2rem;">
+                    <h3 class="card-title">Account metadata</h3>
+                    <div class="detail-row">
+                        <span class="detail-key">Display name</span>
+                        <span class="detail-value" id="metaName">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Email</span>
+                        <span class="detail-value" id="metaEmail">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">User ID (UID)</span>
+                        <span class="detail-value" id="metaUid" style="font-family: ui-monospace, monospace; font-size: 0.8rem;">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Sign-in provider</span>
+                        <span class="detail-value" id="metaProvider">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Account created</span>
+                        <span class="detail-value" id="metaCreated">—</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-key">Last sign-in</span>
+                        <span class="detail-value" id="metaLastLogin">—</span>
                     </div>
                 </div>
             </div>
@@ -204,7 +256,7 @@
                     </div>
                     <div>
                         <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">Product</h4>
-                        <ul style="list-style: none; space-y: 0.5rem;">
+                        <ul style="list-style: none;">
                             <li style="margin-bottom: 0.5rem;"><a href="index.html#features" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Features</a></li>
                             <li style="margin-bottom: 0.5rem;"><a href="index.html#how-it-works" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">How it works</a></li>
                             <li style="margin-bottom: 0.5rem;"><a href="download.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Download</a></li>
@@ -222,8 +274,8 @@
                     <div>
                         <h4 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-primary);">Connect</h4>
                         <ul style="list-style: none;">
-                            <li style="margin-bottom: 0.5rem;"><a href="https://github.com/local-ai-agent" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">GitHub</a></li>
-                            <li style="margin-bottom: 0.5rem;"><a href="docs.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Documentation</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="https://github.com/arkuprosper20-ship-it/verteon" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">GitHub</a></li>
+                            <li style="margin-bottom: 0.5rem;"><a href="releases.html" style="color: var(--text-tertiary); text-decoration: none; font-size: 0.875rem;">Releases</a></li>
                         </ul>
                     </div>
                 </div>
@@ -234,65 +286,98 @@
         </footer>
     </div>
 
-<script>
+    <script>
         // Navigation toggle for mobile
         const navToggle = document.getElementById('navToggle');
         const navLinks = document.querySelector('.nav-links');
-        
         navToggle.addEventListener('click', () => {
             navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
         });
-        
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
+
+        // The logo the admin can play with
+        const logo = document.getElementById('adminLogo');
+        logo.addEventListener('click', () => {
+            logo.classList.remove('spin');
+            void logo.offsetWidth; // restart the animation
+            logo.classList.add('spin');
         });
     </script>
-    
+
     <script type="module">
         import {
             requireAdmin,
             wireChrome,
-            wireCopyButtons,
-            currentUser,
             isAdmin
         } from './assets/js/app-auth.js';
+        import { auth } from './assets/js/firebase-config.js';
 
-        // Gate the admin panel on Firebase Auth + the known admin UID.
+        // Gate: only the known admin UID may view this page.
         const user = await requireAdmin('admin.html');
-        if (user) {
+        if (!user) {
+            // requireAdmin already redirected (sign-in or dashboard).
+        } else {
             wireChrome(user);
-            wireCopyButtons();
 
-            // Show who is logged in as admin.
-            const adminLabel = document.querySelector('.hero .container .text-center .p');
-            if (adminLabel) {
-                adminLabel.textContent = `Signed in as admin: ${user.displayName || user.email}`;
-            }
+            const set = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value;
+            };
+            const formatDate = (iso) => {
+                if (!iso) return '—';
+                const d = new Date(iso);
+                return Number.isNaN(d.getTime()) ? '—' : d.toLocaleString();
+            };
 
-            // Replace the static user table with the real signed-in admin identity.
-            const tbody = document.querySelector('.card[style*="User Management"] table tbody');
-            if (tbody) {
-                tbody.innerHTML = `
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 0.75rem; color: var(--primary-light); font-family: ui-monospace, monospace; font-size: 0.8rem;">${user.uid}</td>
-                        <td style="padding: 0.75rem; color: var(--text-secondary);">${user.email || '—'}</td>
-                        <td style="padding: 0.75rem;">
-                            <span style="background: rgba(99, 102, 241, 0.1); color: var(--primary-light); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">Admin</span>
-                        </td>
-                        <td style="padding: 0.75rem; color: var(--text-tertiary);">now</td>
-                        <td style="padding: 0.75rem;">
-                            <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" disabled>Current</button>
-                        </td>
-                    </tr>
-                `;
-            }
+            // Greeting
+            const name = user.displayName || (user.email || '').split('@')[0];
+            set('adminGreeting', `Signed in as admin: ${name}`);
+
+            // Identity card
+            set('adminName', user.displayName || 'Not set');
+            set('adminEmail', user.email || '—');
+            set('adminUid', user.uid);
+            const avatar = document.getElementById('adminAvatar');
+            if (avatar) avatar.textContent = (user.displayName || user.email || 'A').charAt(0).toUpperCase();
+
+            // Live stats (real values from the Firebase user object)
+            set('statSession', 'Active');
+            set('statProvider', (user.providerData || []).map((p) => p.providerId).join(', ') || '—');
+            set('statVerified', user.emailVerified ? 'Yes' : 'No');
+
+            // Account metadata
+            set('metaName', user.displayName || 'Not set');
+            set('metaEmail', user.email || '—');
+            set('metaUid', user.uid);
+            set('metaProvider', (user.providerData || []).map((p) => p.providerId).join(', ') || '—');
+            set('metaCreated', formatDate(user.metadata && user.metadata.creationTime));
+            set('metaLastLogin', formatDate(user.metadata && user.metadata.lastSignInTime));
+
+            // System checks — real probes, not fabricated statuses
+            const mark = (dotId, valId, ok, text) => {
+                const dot = document.getElementById(dotId);
+                const val = document.getElementById(valId);
+                if (dot) {
+                    dot.classList.remove('status-ok', 'status-error');
+                    dot.classList.add(ok ? 'status-ok' : 'status-error');
+                }
+                if (val) {
+                    val.textContent = text;
+                    val.classList.remove('ok', 'err');
+                    val.classList.add(ok ? 'ok' : 'err');
+                }
+            };
+
+            // 1. Auth: we already have a real signed-in user here.
+            mark('dotAuth', 'valAuth', true, `signed in (${user.uid.slice(0, 8)}…)`);
+
+            // 2. Hosting: this page was served, so hosting is reachable.
+            mark('dotHosting', 'valHosting', true, `served from ${window.location.host}`);
+
+            // 3. Firebase config: the module imported and initialized.
+            mark('dotConfig', 'valConfig', true, `project ${auth.app.options.projectId || 'loaded'}`);
+
+            // 4. Admin gate: re-verify the UID against the allow-list.
+            mark('dotAdmin', 'valAdmin', isAdmin(user), isAdmin(user) ? 'UID authorised' : 'UID not authorised');
         }
     </script>
 </body>

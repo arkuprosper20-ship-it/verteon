@@ -53,6 +53,11 @@
 
                         <div id="formAlert" style="display: none; margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm); background: rgba(248, 81, 73, 0.12); border: 1px solid rgba(248, 81, 73, 0.35); color: #fca5a5; font-size: 0.875rem;" role="alert"></div>
 
+                        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                            <input type="checkbox" id="rememberMe" checked style="width: 16px; height: 16px;">
+                            <label class="form-label" for="rememberMe" style="cursor: pointer; font-size: 0.875rem; color: var(--text-secondary); margin: 0;">Remember me — stay signed in on this browser</label>
+                        </div>
+
                         <button type="submit" class="btn btn-primary" id="submitBtn" style="width: 100%; margin-top: 1rem;">Sign In</button>
                     </form>
                     <div style="margin-top: 2rem; text-align: center; padding-top: 2rem; border-top: 1px solid var(--border);">
@@ -75,7 +80,10 @@
         import {
             signInWithEmailAndPassword,
             auth,
-            describeAuthError
+            describeAuthError,
+            browserLocalPersistence,
+            browserSessionPersistence,
+            setPersistence
         } from './assets/js/firebase-config.js';
         import { wireChrome, loadProfile } from './assets/js/app-auth.js';
         import { showToast, setLoading, wireCopyButtons } from './assets/js/ui-utils.js';
@@ -86,6 +94,7 @@
         const form = document.getElementById('signinForm');
         const submitBtn = document.getElementById('submitBtn');
         const alertBox = document.getElementById('formAlert');
+        const rememberMe = document.getElementById('rememberMe');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
 
@@ -112,6 +121,15 @@
             const password = passwordInput.value;
             if (!email || !password) {
                 setAlert('Enter your email and password.');
+                return;
+            }
+
+            // Persist the session according to the "remember me" choice.
+            const persistence = rememberMe.checked ? browserLocalPersistence : browserSessionPersistence;
+            try {
+                await setPersistence(auth, persistence);
+            } catch (err) {
+                setAlert('Could not set remember-me preference. Please try again.');
                 return;
             }
 

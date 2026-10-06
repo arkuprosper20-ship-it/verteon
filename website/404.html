@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Verteon</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand">
+                    Verteon <span>.</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="index.html#how-it-works" class="nav-link">How it works</a></li>
+                    <li><a href="download.html" class="nav-link">Download</a></li>
+                    <li><a href="docs.html" class="nav-link">Docs</a></li>
+                    <li><a href="signin.html" class="nav-link">Sign in</a></li>
+                </ul>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 404 Content -->
+        <section style="min-height: 70vh; padding: 100px 0 60px; display: flex; align-items: center; justify-content: center;">
+            <div class="container">
+                <div style="text-align: center; max-width: 560px; margin: 0 auto;">
+                    <div style="font-size: 5rem; margin-bottom: 1rem;">&#9888;</div>
+                    <h1 class="h2 mt-1">Page not found</h1>
+                    <p class="p" style="color: var(--text-tertiary); margin-top: 0.75rem;">
+                        The page you are looking for doesn't exist or has been moved.
+                    </p>
+                    <div style="margin-top: 2rem;">
+                        <a href="index.html" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Go back home</a>
+                        <a href="download.html" class="btn btn-outline" style="padding: 0.75rem 1.5rem; margin-left: 0.5rem;">Download Verteon</a>
+                    </div>
+                    <p class="caption" style="color: var(--text-tertiary); margin-top: 1.5rem; font-size: 0.8rem;">
+                        Tip: all official pages live at verteon.web.app — double check the URL.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-surface" style="padding: 4rem 0 2rem;">
+            <div class="container">
+                <div style="border-top: 1px solid var(--border); padding-top: 2rem; text-align: center;">
+                    <p style="color: var(--text-tertiary); font-size: 0.875rem;">&copy; 2026 Verteon. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Navigation toggle for mobile
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.querySelector('.nav-links');
+        navToggle.addEventListener('click', () => {
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        });
+    </script>
+</body>
+</html>

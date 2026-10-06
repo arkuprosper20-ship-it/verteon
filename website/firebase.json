@@ -12,8 +12,7 @@
       "**/*.txt",
       "verify-firebase-config.js",
       "test-firebase-auth.html",
-      "auth-check.html",
-      "admin.html"
+      "auth-check.html"
     ],
     "cleanUrls": true,
     "trailingSlash": false,

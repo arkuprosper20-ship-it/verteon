@@ -15,7 +15,10 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   onAuthStateChanged,
-  signOut
+  signOut,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  setPersistence
 } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
 
 const firebaseConfig = {
@@ -28,8 +31,13 @@ const firebaseConfig = {
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
+
+// Remember signed-in users across browser sessions.
+setPersistence(auth, browserLocalPersistence).catch(() => {
+  // Falling back to session persistence is a safety net only.
+  console.warn('Auth persistence not available; sessions will not be remembered.');
+});
 const googleProvider = new GoogleAuthProvider();
 
 /** Human-readable message for a Firebase Auth error code. */
@@ -66,5 +74,8 @@ export {
   sendPasswordResetEmail,
   updateProfile,
   onAuthStateChanged,
-  signOut
+  signOut,
+  browserLocalPersistence,
+  browserSessionPersistence,
+  setPersistence
 };

@@ -33,6 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.commands.executeCommand('workbench.action.openSettings', 'agent.')
     ),
     vscode.commands.registerCommand('aiAgent.clearMemory', () => sidebarProvider.clearMemory()),
+    vscode.commands.registerCommand('aiAgent.uninstall', () => sidebarProvider.uninstall()),
     vscode.commands.registerCommand('aiAgent.refreshModels', () => vscode.commands.executeCommand('aiAgent.open'))
   );
 

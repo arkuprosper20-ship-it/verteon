@@ -340,6 +340,59 @@ Tools that shell out must call `classifyCommand` first — the sidebar does not 
 
 ---
 
+## Deployment
+
+The project has two deployable products, both hosted on the same GitHub repository
+(`arkuprosper20-ship-it/verteon`): the VS Code extension (under `ai-agent-ext/`) and the
+marketing website (under `website/`).
+
+**Build and install the extension locally**
+
+```bash
+cd ai-agent-ext
+npm install
+npm run build         # production bundle to dist/
+npm run package       # build + package local-ai-agent-0.2.0.vsix
+code --install-extension local-ai-agent-0.2.0.vsix
+```
+
+**Push changes to GitHub**
+
+```bash
+git add -A
+git commit -m "Describe your change"
+git push origin main
+```
+
+The website is the only product auto-deployed from Git — push directly to the `main` branch
+and both platforms re-deploy. To deploy manually:
+
+**Deploy to Firebase Hosting** (project `planning-with-ai-5ebb1`, site `verteon`)
+
+```bash
+cd website
+firebase deploy --only hosting
+# URL: https://verteon.web.app
+```
+
+**Deploy to Vercel** (production preview)
+
+```bash
+cd website
+vercel --prod --yes
+# URL: https://website-*.vercel.app
+```
+
+**Uninstall the extension**
+
+```bash
+code --uninstall-extension local-ai-agent
+```
+or click **Uninstall** in the VS Code Extensions view after opening the **AI Agent** panel and
+running **AI Agent: Uninstall**.
+
+---
+
 ## UI wireframes
 
 Full text version: `WIREFRAME.txt`

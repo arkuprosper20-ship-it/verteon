@@ -1,11 +1,14 @@
 import * as os from 'os';
 import { spawn, ChildProcess } from 'child_process';
-import { ToolDefinition, ToolExecutionContext, ToolResult } from '../types';
+import { ToolDefinition, ToolExecutionContext, ToolResult, TerminalResult } from '../types';
 import { classifyCommand } from '../security/commandSafety';
 import { getConfig } from '../config/configuration';
+import { redactSecrets } from '../security/secretRedaction';
 
 interface RunningProcess {
   proc: ChildProcess;
+  command: string;
+  startedAt: number;
   output: string[];
 }
 
@@ -41,26 +44,52 @@ async function runOnce(
       child.kill();
       resolve({
         ok: false,
-        output: truncate(stdout + stderr),
+        output: redactSecrets(`Command timed out after ${timeoutMs}ms and was killed: ${command}`),
         error: `Command timed out after ${timeoutMs}ms and was killed: ${command}`,
+        data: {
+          terminal: {
+            command,
+            exitCode: null,
+            stdout: truncate(stdout),
+            stderr: truncate(stderr),
+            duration: Date.now() - start,
+            timedOut: true,
+            cancelled: false,
+          } as TerminalResult,
+        },
       });
     }, timeoutMs);
 
     child.stdout?.on('data', (d) => {
       const s = d.toString();
       stdout += s;
-      emitActivity(s);
+      emitActivity(redactSecrets(s));
     });
     child.stderr?.on('data', (d) => {
       const s = d.toString();
       stderr += s;
-      emitActivity(s);
+      emitActivity(redactSecrets(s));
     });
     child.on('error', (err) => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
-      resolve({ ok: false, output: truncate(stdout + stderr), error: `Failed to start command: ${err.message}` });
+      resolve({
+        ok: false,
+        output: redactSecrets(truncate(stdout + stderr)),
+        error: `Failed to start command: ${err.message}`,
+        data: {
+          terminal: {
+            command,
+            exitCode: null,
+            stdout: truncate(stdout),
+            stderr: truncate(stderr),
+            duration: Date.now() - start,
+            timedOut: false,
+            cancelled: false,
+          } as TerminalResult,
+        },
+      });
     });
     child.on('close', (code) => {
       if (settled) return;
@@ -69,8 +98,21 @@ async function runOnce(
       const duration = Date.now() - start;
       resolve({
         ok: code === 0,
-        output: `$ ${command}\n(exit code ${code}, ${duration}ms)\n${truncate(stdout + stderr)}`,
-        data: { exitCode: code, durationMs: duration },
+        output: redactSecrets(`$ ${command}\n(exit code ${code}, ${duration}ms)\n${truncate(stdout + stderr)}`),
+        error: code === 0 ? undefined : `Command exited with code ${code}`,
+        data: {
+          terminal: {
+            command,
+            exitCode: code,
+            stdout: truncate(stdout),
+            stderr: truncate(stderr),
+            duration,
+            timedOut: false,
+            cancelled: false,
+          } as TerminalResult,
+          exitCode: code,
+          durationMs: duration,
+        },
       });
     });
   });
@@ -141,21 +183,37 @@ export const startProcessTool: ToolDefinition = {
   riskTier: 'approval',
   inputSchema: {
     type: 'object',
-    properties: { command: { type: 'string', description: 'The shell command to start, e.g. "npm run dev".' } },
+    properties: {
+      command: { type: 'string', description: 'The shell command to start, e.g. "npm run dev".' },
+      timeoutMs: { type: 'number', description: 'Optional override for the command timeout in milliseconds.' },
+      workingDirectory: { type: 'string', description: 'Optional working directory. Defaults to workspace root.' },
+      shell: { type: 'string', description: 'Optional shell override: bash, sh, zsh, powershell, pwsh, cmd.' },
+    },
     required: ['command'],
   },
   async execute(input, ctx): Promise<ToolResult> {
     const gate = await classifyAndApprove(input.command, ctx);
     if (!gate.allowed) return { ok: false, output: '', error: gate.error };
-    const { cmd, args } = shellFor(input.command);
-    const child = spawn(cmd, args, { cwd: ctx.workspaceRoot, env: process.env });
+    const { cmd, args } = input.shell ? { cmd: input.shell, args: ['-c', input.command] } : shellFor(input.command);
+    const cwd = input.workingDirectory || ctx.workspaceRoot;
+    const child = spawn(cmd, args, { cwd, env: process.env });
     const id = `proc_${++processCounter}`;
-    const record: RunningProcess = { proc: child, output: [] };
+    const record: RunningProcess = { proc: child, command: input.command, startedAt: Date.now(), output: [] };
     runningProcesses.set(id, record);
-    child.stdout?.on('data', (d) => record.output.push(d.toString()));
-    child.stderr?.on('data', (d) => record.output.push(d.toString()));
+    child.stdout?.on('data', (d) => record.output.push(redactSecrets(d.toString())));
+    child.stderr?.on('data', (d) => record.output.push(redactSecrets(d.toString())));
     child.on('close', (code) => record.output.push(`\n[process exited with code ${code}]`));
-    return { ok: true, output: `Started background process ${id}: ${input.command}`, data: { processId: id } };
+    return {
+      ok: true,
+      output: `Started background process ${id}: ${input.command}`,
+      data: {
+        processId: id,
+        command: input.command,
+        workingDirectory: cwd,
+        shell: cmd,
+        pid: child.pid,
+      },
+    };
   },
 };
 
@@ -173,7 +231,7 @@ export const stopProcessTool: ToolDefinition = {
     if (!record) return { ok: false, output: '', error: `No running process with id ${input.processId}.` };
     record.proc.kill();
     runningProcesses.delete(input.processId);
-    return { ok: true, output: `Stopped process ${input.processId}.` };
+    return { ok: true, output: `Stopped process ${input.processId}.`, data: { processId: input.processId, status: 'stopped' } };
   },
 };
 
@@ -189,7 +247,102 @@ export const getProcessOutputTool: ToolDefinition = {
   async execute(input): Promise<ToolResult> {
     const record = runningProcesses.get(input.processId);
     if (!record) return { ok: false, output: '', error: `No running process with id ${input.processId}.` };
-    return { ok: true, output: truncate(record.output.join('')) };
+    return { ok: true, output: redactSecrets(truncate(record.output.join(''))) };
+  },
+};
+
+export const listProcessesTool: ToolDefinition = {
+  name: 'listProcesses',
+  description: 'List all background processes currently running.',
+  riskTier: 'safe',
+  inputSchema: { type: 'object', properties: {} },
+  async execute(): Promise<ToolResult> {
+    const procs = Array.from(runningProcesses.entries()).map(([id, r]) => ({
+      id,
+      command: r.command,
+      pid: r.proc.pid,
+      startedAt: r.startedAt,
+      running: !r.proc.killed,
+    }));
+    return { ok: true, output: JSON.stringify(procs, null, 2), data: { processes: procs } };
+  },
+};
+
+export const getProcessInfoTool: ToolDefinition = {
+  name: 'getProcessInfo',
+  description: 'Get detailed information about a specific background process.',
+  riskTier: 'safe',
+  inputSchema: {
+    type: 'object',
+    properties: { processId: { type: 'string', description: 'The processId returned by startProcess.' } },
+    required: ['processId'],
+  },
+  async execute(input): Promise<ToolResult> {
+    const record = runningProcesses.get(input.processId);
+    if (!record) return { ok: false, output: '', error: `No running process with id ${input.processId}.` };
+    return {
+      ok: true,
+      output: JSON.stringify({
+        processId: input.processId,
+        command: record.command,
+        pid: record.proc.pid,
+        startedAt: record.startedAt,
+        running: !record.proc.killed,
+      }, null, 2),
+      data: {
+        processId: input.processId,
+        command: record.command,
+        pid: record.proc.pid,
+        startedAt: record.startedAt,
+        running: !record.proc.killed,
+      },
+    };
+  },
+};
+
+export const inspectEnvironmentTool: ToolDefinition = {
+  name: 'inspectEnvironment',
+  description: 'Inspect the development environment: which runtimes, package managers, and tools are available. Returns availability for node, npm, python, git, docker, etc.',
+  riskTier: 'safe',
+  inputSchema: { type: 'object', properties: {} },
+  async execute(): Promise<ToolResult> {
+    const checks: Array<{ name: string; available: boolean; version: string }> = [];
+    const commands: Array<[string, string, string]> = [
+      ['node', 'node', 'Node.js'],
+      ['npm', 'npm', 'npm'],
+      ['npx', 'npx', 'npx'],
+      ['yarn', 'yarn', 'Yarn'],
+      ['pnpm', 'pnpm', 'pnpm'],
+      ['bun', 'bun', 'Bun'],
+      ['python', 'python', 'Python'],
+      ['python3', 'python3', 'Python 3'],
+      ['pip', 'pip', 'pip'],
+      ['git', 'git', 'Git'],
+      ['docker', 'docker', 'Docker'],
+      ['go', 'go', 'Go'],
+      ['cargo', 'cargo', 'Rust'],
+      ['rustc', 'rustc', 'Rust compiler'],
+      ['java', 'java', 'Java'],
+      ['javac', 'javac', 'Java compiler'],
+      ['gcc', 'gcc', 'GCC'],
+      ['clang', 'clang', 'Clang'],
+      ['ruby', 'ruby', 'Ruby'],
+      ['php', 'php', 'PHP'],
+      ['dotnet', 'dotnet', '.NET'],
+    ];
+    for (const [cmd, label, name] of commands) {
+      try {
+        const result = await runOnce(`${cmd} --version`, process.cwd(), 5000, () => {});
+        const version = result.output.trim().split('\n')[0];
+        checks.push({ name, available: result.ok, version: result.ok ? version : '' });
+      } catch {
+        checks.push({ name, available: false, version: '' });
+      }
+    }
+    const available = checks.filter(c => c.available);
+    const unavailable = checks.filter(c => !c.available);
+    const output = `Environment capabilities\n\nAvailable:\n${available.map(c => `✓ ${c.name}: ${c.version}`).join('\n')}\n\nNot available:\n${unavailable.map(c => `✕ ${c.name}`).join('\n')}`;
+    return { ok: true, output, data: { available: available.map(c => c.name), unavailable: unavailable.map(c => c.name), details: checks } };
   },
 };
 
@@ -210,4 +363,7 @@ export const terminalTools: ToolDefinition[] = [
   startProcessTool,
   stopProcessTool,
   getProcessOutputTool,
+  listProcessesTool,
+  getProcessInfoTool,
+  inspectEnvironmentTool,
 ];
